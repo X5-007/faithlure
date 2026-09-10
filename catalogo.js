@@ -34,7 +34,7 @@ const CATALOGO = {
       "Creatinas, preentrenos y proteínas seleccionadas una por una. Te decimos cuál te sirve, sin venderte de más.",
     ctaPrimary: "Ver catálogo",
     ctaSecondary: "Cotizar por WhatsApp",
-    // Producto que se muestra en 3D en el hero (usa su "id" de la lista de productos)
+    // Producto que se muestra en el hero (usa su "id" de la lista de productos)
     showcase: {
       productId: "on-gold-standard",
     },
@@ -73,15 +73,13 @@ const CATALOGO = {
   catalog: {
     eyebrow: "Catálogo",
     title: "Elige por objetivo, no por moda.",
-    text: "Filtra por categoría y toca cualquier producto para verlo en 3D con su ficha completa.",
+    text: "Filtra por categoría y toca cualquier producto para ver su ficha completa.",
   },
 
   /* -----------------------------------------------------------------------
      6. CATEGORÍAS
      -----------------------------------------------------------------------
      El "id" es el que enlaza cada producto con su categoría.
-     "colors" es el envase de respaldo: se usa solo si un producto no trae
-     su propio bloque "model".
      ----------------------------------------------------------------------- */
   categories: [
     {
@@ -89,21 +87,18 @@ const CATALOGO = {
       name: "Creatinas",
       tagline: "Fuerza, volumen y recuperación.",
       icon: "bolt",
-      colors: { body: "#2a2724", band: "#c9a15a", cap: "#171512", text: "#171512" },
     },
     {
       id: "preentrenos",
       name: "Preentrenos",
       tagline: "Energía y foco desde la primera serie.",
       icon: "flame",
-      colors: { body: "#8e2c22", band: "#171512", cap: "#5f1d16", text: "#f3efe8" },
     },
     {
       id: "proteinas",
       name: "Proteínas",
       tagline: "La base de todo: construir músculo.",
       icon: "shake",
-      colors: { body: "#a97b3f", band: "#f7f4ef", cap: "#7a5729", text: "#171512" },
     },
   ],
 
@@ -122,19 +117,10 @@ const CATALOGO = {
        featured  -> true resalta la tarjeta
        short     -> una línea de descripción
        bullets   -> hasta 4 puntos para la ficha
-       image     -> opcional. Foto del producto: "img/productos/archivo.png"
-                    Si la dejas vacía se muestra el envase 3D.
+       image     -> foto del producto: "img/productos/archivo.webp"
+                    Lo ideal: fondo transparente y unos 640 px de alto.
+                    Si la dejas vacía se muestra un marcador con iniciales.
        stock     -> true / false ("Disponible" o "Bajo pedido")
-       model     -> el envase 3D del producto, copiado del envase real:
-                      shape  -> "bote" (tarro con tapa) o "bolsa" (bolsa de pie)
-                      body   -> color del envase
-                      lid    -> color de la tapa (solo en "bote")
-                      label  -> color de fondo de la etiqueta
-                      ink    -> color del texto de la etiqueta
-                      accent -> color del nombre y las líneas
-                      stripe -> opcional, franja vertical de color a un lado
-                      title  -> opcional, el nombre tal como va impreso
-                    Si no pones "model", se usa el envase de la categoría.
      ----------------------------------------------------------------------- */
   products: [
 
@@ -156,11 +142,7 @@ const CATALOGO = {
         "Sin sabor: se disuelve en agua, jugo o proteína",
         "Ideal para empezar con creatina",
       ],
-      image: "",
-      model: {
-        shape: "bote", body: "#17171b", lid: "#d8232a", label: "#0e0e12",
-        ink: "#ffffff", accent: "#e63946", title: "CREATINE MONOHYDRATE",
-      },
+      image: "img/productos/ins-acs-creatine.webp",
     },
     {
       id: "mut-creakong",
@@ -179,11 +161,7 @@ const CATALOGO = {
         "Enfocada en fuerza y volumen",
         "Rinde alrededor de 2 meses",
       ],
-      image: "",
-      model: {
-        shape: "bote", body: "#141414", lid: "#191919", label: "#0d0d0d",
-        ink: "#ffffff", accent: "#cf2027", stripe: "#f2d600", title: "CreaKong",
-      },
+      image: "img/productos/mut-creakong.webp",
     },
     {
       id: "nt-creatine-drive",
@@ -202,11 +180,7 @@ const CATALOGO = {
         "Monohidrato: el más estudiado del mercado",
         "5 g por servicio",
       ],
-      image: "",
-      model: {
-        shape: "bote", body: "#121212", lid: "#171717", label: "#0d0d0d",
-        ink: "#ffffff", accent: "#d81f26", title: "CREATINE DRIVE",
-      },
+      image: "img/productos/nt-creatine-drive.webp",
     },
 
     /* --------------------------- PREENTRENOS --------------------------- */
@@ -227,11 +201,9 @@ const CATALOGO = {
         "Energía sostenida sin bajón brusco",
         "Sabor Fruit Punch",
       ],
-      image: "",
-      model: {
-        shape: "bote", body: "#141414", lid: "#191919", label: "#0d0d0d",
-        ink: "#ffffff", accent: "#cf2027", stripe: "#f2d600", title: "PWO",
-      },
+      // OJO: esta foto es del Mutant GEAA (aminoácidos), no del PWO.
+      // Cámbiala por la del PWO o renombra el producto a "GEAA".
+      image: "img/productos/mut-pwo.webp",
     },
     {
       id: "raw-cbum-thavage",
@@ -250,11 +222,7 @@ const CATALOGO = {
         "Enfocado en concentración y bombeo",
         "Sabor tamarindo",
       ],
-      image: "",
-      model: {
-        shape: "bote", body: "#46311f", lid: "#f2ede3", label: "#38271a",
-        ink: "#f6efe5", accent: "#cd7f4c", title: "THAVAGE",
-      },
+      image: "img/productos/raw-cbum-thavage.webp",
     },
     {
       id: "bucked-up-woke-af",
@@ -273,11 +241,7 @@ const CATALOGO = {
         "Estimulación alta: empieza con media dosis",
         "Sabor Blue Razz",
       ],
-      image: "",
-      model: {
-        shape: "bote", body: "#111214", lid: "#161719", label: "#0c0d0f",
-        ink: "#ffffff", accent: "#62d2e8", title: "WOKE AF",
-      },
+      image: "img/productos/bucked-up-woke-af.webp",
     },
     {
       id: "ins-psychotic",
@@ -296,11 +260,7 @@ const CATALOGO = {
         "Energía y foco de larga duración",
         "Sabor Gummy Candy",
       ],
-      image: "",
-      model: {
-        shape: "bote", body: "#141417", lid: "#d8232a", label: "#0e0e12",
-        ink: "#ffffff", accent: "#e63946", title: "PSYCHOTIC",
-      },
+      image: "img/productos/ins-psychotic.webp",
     },
 
     /* ---------------------------- PROTEÍNAS ---------------------------- */
@@ -321,11 +281,7 @@ const CATALOGO = {
         "Whey de absorción rápida",
         "Sabor vainilla",
       ],
-      image: "",
-      model: {
-        shape: "bote", body: "#191919", lid: "#131313", label: "#1e1e1e",
-        ink: "#f4efe4", accent: "#c9a227", stripe: "#b3122d", title: "100% WHEY",
-      },
+      image: "img/productos/on-gold-standard.webp",
     },
     {
       id: "nt-isofit",
@@ -344,11 +300,7 @@ const CATALOGO = {
         "Proteína aislada, baja en carbohidratos",
         "Sabor Chocolate Shake",
       ],
-      image: "",
-      model: {
-        shape: "bote", body: "#f3f2ef", lid: "#ffffff", label: "#1c3f94",
-        ink: "#ffffff", accent: "#9dc0f0", title: "ISOFIT",
-      },
+      image: "img/productos/nt-isofit.webp",
     },
     {
       id: "mut-whey",
@@ -367,11 +319,7 @@ const CATALOGO = {
         "Pensada para etapa de volumen",
         "Sabor Chocolate Fudge Brownie",
       ],
-      image: "",
-      model: {
-        shape: "bolsa", body: "#141414", label: "#0d0d0d",
-        ink: "#ffffff", accent: "#cf2027", stripe: "#f2d600", title: "WHEY",
-      },
+      image: "img/productos/mut-whey.webp",
     },
   ],
 

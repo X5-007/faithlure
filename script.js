@@ -11,7 +11,6 @@
 
   const d = CATALOGO;
   const $ = (id) => document.getElementById(id);
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ====================================================================
      1. UTILIDADES
@@ -71,253 +70,33 @@
   };
 
   /* ====================================================================
-     3. ENVASES EN 3D
+     3. IMAGEN DEL PRODUCTO
      ====================================================================
-     Cada producto se dibuja con la forma de su envase real:
-       "bote"  -> tarro cilíndrico con tapa estriada y etiqueta al frente
-       "bolsa" -> bolsa de pie con frente, respaldo y fuelles laterales
-     El cilindro se arma con tiras verticales giradas en círculo; el brillo
-     va pintado en cada tira para que se vea el volumen del plástico.
+     Cada producto se muestra con su foto real (campo "image" de catalogo.js).
+     Si un producto todavía no tiene foto, se dibuja un marcador con sus
+     iniciales para que la tarjeta no quede vacía.
      ==================================================================== */
-  const SEGMENTS = 22;
 
-  /* Aclara (valores positivos) u oscurece (negativos) un color hexadecimal */
-  const shade = (hex, amount) => {
-    const n = parseInt(String(hex).replace('#', ''), 16);
-    const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
-      const out = amount >= 0 ? v + (255 - v) * amount : v * (1 + amount);
-      return Math.max(0, Math.min(255, Math.round(out)));
-    });
-    return `rgb(${ch.join(',')})`;
-  };
-
-  /* Luz del estudio: difusa + un reflejo cerrado, como plástico brillante */
-  const lightAt = (angle) => {
-    const c = Math.max(0, Math.cos((angle - 22) * Math.PI / 180));
-    return 0.5 + 0.44 * c + 0.3 * Math.pow(c, 16);
-  };
-
-  /* Envase de respaldo por si un producto no trae su propio "model" */
-  const fallbackModel = (p) => {
-    const c = categoryOf(p.category).colors;
-    return { shape: 'bote', body: c.body, lid: c.cap, label: c.band, ink: c.text, accent: c.cap };
-  };
-  const modelOf = (p) => Object.assign(fallbackModel(p), p.model || {});
-
-  /* Un tramo de cilindro (el cuerpo del bote o la tapa) */
-  function cylinder(opts) {
-    const part = document.createElement('div');
-    part.className = 'mdl__part';
-    part.style.top = `${opts.top}px`;
-    part.style.height = `${opts.height}px`;
-
-    const segW = (2 * opts.radius * Math.tan(Math.PI / SEGMENTS)) + 0.8;
-    for (let i = 0; i < SEGMENTS; i++) {
-      const angle = (360 / SEGMENTS) * i;
-      const seg = document.createElement('div');
-      seg.className = 'mdl__seg';
-      seg.style.width = `${segW}px`;
-      seg.style.marginLeft = `${-segW / 2}px`;
-      seg.style.transform = `rotateY(${angle}deg) translateZ(${opts.radius}px)`;
-      seg.style.background = opts.background;
-      seg.style.filter = `brightness(${lightAt(angle).toFixed(3)})`;
-      part.appendChild(seg);
-    }
-    return part;
-  }
-
-  /* Una tapa vista desde arriba (o el fondo del envase) */
-  function discFace(opts) {
-    const el = document.createElement('div');
-    el.className = 'mdl__disc';
-    el.style.width = `${opts.radius * 2}px`;
-    el.style.height = `${opts.radius * 2}px`;
-    el.style.marginLeft = `${-opts.radius}px`;
-    el.style.marginTop = `${-opts.radius}px`;
-    el.style.top = `${opts.top}px`;
-    el.style.transform = 'rotateX(90deg)';
-    el.style.background = opts.background;
-    return el;
-  }
-
-  /* La etiqueta impresa del producto */
-  function productLabel(p, m, opts) {
-    const el = document.createElement('div');
-    el.className = 'plabel';
-    el.style.fontSize = `${opts.fontSize}px`;
-    el.style.width = `${opts.width}px`;
-    el.style.marginLeft = `${-opts.width / 2}px`;
-    el.style.top = `${opts.top}px`;
-    el.style.transform = `translateZ(${opts.depth}px)`;
-    el.style.color = m.ink;
-    el.style.setProperty('--accent', m.accent);
-
-    /* Un nombre largo ("CREATINE MONOHYDRATE") se achica para caber en la
-       etiqueta, igual que en un envase real */
-    const title = m.title || p.name;
-    const longest = Math.max.apply(null, title.split(/\s+/).map((word) => word.length));
-    const emsAvailable = opts.width / opts.fontSize - 1.35;
-    const nameEm = Math.max(0.66, Math.min(1.28, emsAvailable / (longest * 0.66)));
-    el.style.setProperty('--name-size', `${nameEm.toFixed(2)}em`);
-
-    const size = [p.size, p.servings].filter(Boolean).join(' · ');
-    el.innerHTML =
-      (m.stripe ? `<span class="plabel__stripe" style="background:${esc(m.stripe)}"></span>` : '') +
-      `<span class="plabel__brand">${esc(p.brand)}</span>` +
-      `<b class="plabel__name">${esc(title)}</b>` +
-      '<span class="plabel__bar"></span>' +
-      (p.variant ? `<span class="plabel__flavor">${esc(p.variant)}</span>` : '') +
-      (size ? `<span class="plabel__size">${esc(size)}</span>` : '');
-    return el;
-  }
-
-  /* --- Bote: cuerpo + tapa estriada + etiqueta --- */
-  function buildTub(p, m, w, h) {
-    const r = w / 2;
-    const lidH = Math.round(h * 0.16);
-    const lidR = r * 1.035;
-    const bodyTop = Math.round(lidH * 0.72);
-    const bodyH = h - bodyTop;
-
-    const jar = document.createElement('div');
-    jar.className = 'jar';
-
-    /* Cuerpo: sombra bajo la tapa, franja de la etiqueta y base más oscura */
-    jar.appendChild(cylinder({
-      radius: r, height: bodyH, top: bodyTop,
-      background: [
-        'linear-gradient(180deg,',
-        `${shade(m.body, -0.45)} 0 3%,`,
-        `${shade(m.body, 0.03)} 3% 22%,`,
-        `${shade(m.label, 0.02)} 22% 78%,`,
-        `${shade(m.body, 0.02)} 78% 94%,`,
-        `${shade(m.body, -0.42)} 94% 100%)`,
-      ].join(' '),
-    }));
-
-    /* Tapa: estrías verticales como las de un tarro real */
-    jar.appendChild(cylinder({
-      radius: lidR, height: lidH, top: 0,
-      background:
-        `repeating-linear-gradient(90deg, ${shade(m.lid, 0.10)} 0 2px, ${shade(m.lid, -0.16)} 2px 4.5px),` +
-        `linear-gradient(180deg, ${shade(m.lid, 0.16)} 0 14%, ${shade(m.lid, -0.30)} 100%)`,
-    }));
-    jar.appendChild(discFace({
-      radius: lidR, top: 0,
-      background: `radial-gradient(circle at 38% 32%, ${shade(m.lid, 0.30)}, ${shade(m.lid, -0.18)} 76%)`,
-    }));
-
-    jar.appendChild(productLabel(p, m, {
-      fontSize: Math.max(6.5, w * 0.077),
-      width: w * 0.70,
-      top: bodyTop + bodyH * 0.26,
-      depth: r + 0.6,
-    }));
-
-    return jar;
-  }
-
-  /* --- Bolsa de pie ---------------------------------------------------
-     Se arma como un cilindro aplastado: la sección es una elipse ancha y
-     poco profunda, así la bolsa se ve inflada por el producto y con los
-     costados redondeados, no como una caja.
-     -------------------------------------------------------------------- */
-  const POUCH_SEGMENTS = 20;
-
-  function buildPouch(p, m, w, h) {
-    const rx = w / 2;                 // mitad del ancho
-    const rz = (w * 0.34) / 2;        // mitad del fondo
-    const jar = document.createElement('div');
-    jar.className = 'jar';
-
-    /* Franja de sello arriba, cuerpo y base reforzada */
-    const background = [
-      'linear-gradient(180deg,',
-      `${shade(m.body, -0.55)} 0 4%,`,
-      `${shade(m.body, -0.18)} 4% 7%,`,
-      `${shade(m.body, 0.02)} 7% 86%,`,
-      `${shade(m.body, -0.26)} 86% 96%,`,
-      `${shade(m.body, -0.55)} 96% 100%)`,
-    ].join(' ');
-
-    const part = document.createElement('div');
-    part.className = 'mdl__part';
-    part.style.top = '0';
-    part.style.height = `${h}px`;
-
-    for (let i = 0; i < POUCH_SEGMENTS; i++) {
-      const t0 = (2 * Math.PI * i) / POUCH_SEGMENTS;
-      const t1 = (2 * Math.PI * (i + 1)) / POUCH_SEGMENTS;
-      const tm = (t0 + t1) / 2;
-
-      const cx = rx * Math.sin(tm);
-      const cz = rz * Math.cos(tm);
-      const segW = Math.hypot(rx * (Math.sin(t1) - Math.sin(t0)), rz * (Math.cos(t1) - Math.cos(t0))) + 0.8;
-      /* Ángulo hacia donde "mira" la cara, según la tangente de la elipse */
-      const facing = Math.atan2(rz * Math.sin(tm), rx * Math.cos(tm)) * 180 / Math.PI;
-
-      const seg = document.createElement('div');
-      seg.className = 'mdl__seg';
-      seg.style.width = `${segW}px`;
-      seg.style.marginLeft = `${-segW / 2}px`;
-      seg.style.transform = `translate3d(${cx.toFixed(2)}px, 0, ${cz.toFixed(2)}px) rotateY(${facing.toFixed(2)}deg)`;
-      seg.style.background = background;
-      seg.style.filter = `brightness(${lightAt(facing).toFixed(3)})`;
-      part.appendChild(seg);
-    }
-    jar.appendChild(part);
-
-    /* Tapa plana del sello, achatada para seguir la elipse */
-    const top = discFace({
-      radius: rx,
-      top: 0,
-      background: `linear-gradient(180deg, ${shade(m.body, -0.5)}, ${shade(m.body, -0.28)})`,
-    });
-    top.style.transform = `rotateX(90deg) scaleY(${(rz / rx).toFixed(3)})`;
-    jar.appendChild(top);
-
-    jar.appendChild(productLabel(p, m, {
-      fontSize: Math.max(6.5, w * 0.072),
-      width: w * 0.76,
-      top: h * 0.28,
-      depth: rz + 0.6,
-    }));
-
-    return jar;
-  }
-
-  /**
-   * Dibuja el envase 3D de un producto.
-   * @param {object} p  el producto
-   * @param {string} size  'sm' para las tarjetas, 'lg' para la ficha
-   */
-  function buildModel(p, size) {
-    const m = modelOf(p);
-    const big = size === 'lg';
-    const w = big ? (m.shape === 'bolsa' ? 172 : 176) : (m.shape === 'bolsa' ? 122 : 124);
-    const h = big ? (m.shape === 'bolsa' ? 256 : 262) : (m.shape === 'bolsa' ? 182 : 184);
-
-    const wrap = document.createElement('div');
-    wrap.className = `jar3d jar3d--${m.shape}`;
-    wrap.style.setProperty('--jar-w', `${w}px`);
-    wrap.style.setProperty('--jar-h', `${h}px`);
-    wrap.appendChild(m.shape === 'bolsa' ? buildPouch(p, m, w, h) : buildTub(p, m, w, h));
-    return wrap;
-  }
-
-  /* Si el producto tiene foto se muestra la foto en un marco 3D */
   function buildVisual(p, size) {
+    const wrap = document.createElement('div');
+    wrap.className = `shot shot--${size === 'lg' ? 'lg' : 'sm'}`;
+
     if (p.image) {
-      const wrap = document.createElement('div');
-      wrap.className = 'photo3d';
       const img = document.createElement('img');
+      img.className = 'shot__img';
       img.src = p.image;
       img.alt = fullName(p);
-      img.loading = 'lazy';
+      img.loading = size === 'lg' ? 'eager' : 'lazy';
+      img.decoding = 'async';
       wrap.appendChild(img);
-      return wrap;
+    } else {
+      const ph = document.createElement('span');
+      ph.className = 'shot__placeholder';
+      ph.textContent = (p.brand || p.name).slice(0, 2).toUpperCase();
+      ph.setAttribute('aria-hidden', 'true');
+      wrap.appendChild(ph);
     }
-    return buildModel(p, size);
+    return wrap;
   }
 
   /* ====================================================================
@@ -496,7 +275,6 @@
   const modal = $('productModal');
   const modalBody = $('modalBody');
   let lastFocused = null;
-  let dragState = null;
 
   $('modalClose').innerHTML = icons.close;
 
@@ -511,9 +289,7 @@
 
     modalBody.innerHTML = `
       <div class="detail">
-        <div class="detail__stage" id="detailStage">
-          <p class="detail__drag">Arrastra para girar</p>
-        </div>
+        <div class="detail__stage" id="detailStage"></div>
         <div class="detail__body">
           <p class="detail__brand">${esc(p.brand)}</p>
           <h2 class="detail__name" id="modalName">${esc(p.name)}</h2>
@@ -530,13 +306,7 @@
         </div>
       </div>`;
 
-    const stage = $('detailStage');
-    const visual = buildVisual(p, 'lg');
-    stage.insertBefore(visual, stage.firstChild);
-
-    const jar = visual.querySelector('.jar');
-    if (jar && !reduceMotion) jar.classList.add('jar--visible');
-    setupDrag(stage, visual);
+    $('detailStage').appendChild(buildVisual(p, 'lg'));
 
     modalBody.querySelector('[data-add]').addEventListener('click', () => addToCart(p.id));
 
@@ -548,69 +318,8 @@
   function closeDetail() {
     modal.hidden = true;
     modalBody.innerHTML = '';
-    dragState = null;
     if (cartEl.hidden) document.body.classList.remove('is-locked');
     if (lastFocused) lastFocused.focus();
-  }
-
-  /* Giro con el dedo o el ratón */
-  function setupDrag(stage, visual) {
-    const jar = visual.querySelector('.jar');
-    const photo = visual.classList.contains('photo3d') ? visual : null;
-    let spin = 0;
-    let velocity = 0;
-    let raf = null;
-
-    const apply = () => {
-      if (jar) jar.style.transform = `rotateX(-8deg) rotateY(${spin}deg)`;
-      if (photo) {
-        photo.style.setProperty('--tilt-y', `${Math.max(-28, Math.min(28, spin))}deg`);
-      }
-    };
-
-    const inertia = () => {
-      if (Math.abs(velocity) < 0.05) {
-        raf = null;
-        if (jar && !reduceMotion) {
-          /* Reanuda el giro automático justo donde quedó, sin salto */
-          const vuelta = ((spin % 360) + 360) % 360;
-          jar.style.animationDelay = `${-(vuelta / 360) * 26}s`;
-          jar.style.transform = '';
-          jar.classList.remove('jar--manual');
-        }
-        return;
-      }
-      spin += velocity;
-      velocity *= 0.94;
-      apply();
-      raf = requestAnimationFrame(inertia);
-    };
-
-    stage.addEventListener('pointerdown', (e) => {
-      if (jar) jar.classList.add('jar--manual');
-      if (raf) { cancelAnimationFrame(raf); raf = null; }
-      stage.classList.add('is-dragging');
-      stage.setPointerCapture(e.pointerId);
-      dragState = { x: e.clientX, spin };
-      velocity = 0;
-    });
-
-    stage.addEventListener('pointermove', (e) => {
-      if (!dragState) return;
-      const delta = (e.clientX - dragState.x) * 0.6;
-      velocity = delta - (spin - dragState.spin);
-      spin = dragState.spin + delta;
-      apply();
-    });
-
-    const end = () => {
-      if (!dragState) return;
-      dragState = null;
-      stage.classList.remove('is-dragging');
-      if (!reduceMotion) raf = requestAnimationFrame(inertia);
-    };
-    stage.addEventListener('pointerup', end);
-    stage.addEventListener('pointercancel', end);
   }
 
   modal.addEventListener('click', (e) => {
@@ -663,11 +372,12 @@
       cartItemsEl.innerHTML = order
         .map((it) => {
           const p = productOf(it.id);
-          const cat = categoryOf(p.category);
+          const miniatura = p.image
+            ? `<img src="${esc(p.image)}" alt="" loading="lazy">`
+            : esc(p.brand.slice(0, 2).toUpperCase());
           return `
             <div class="cart__item">
-              <span class="cart__swatch" aria-hidden="true"
-                    style="background:${cat.colors.body};color:${cat.colors.band}">${esc(p.brand.slice(0, 2).toUpperCase())}</span>
+              <span class="cart__swatch" aria-hidden="true">${miniatura}</span>
               <div>
                 <h3>${esc(p.name)}</h3>
                 <p>${esc([p.brand, p.variant, p.size].filter(Boolean).join(' · '))}</p>
@@ -875,20 +585,8 @@
       { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
     );
     document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
-
-    /* Los botes solo giran mientras se ven: ahorra batería en el celular */
-    const jarObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          entry.target.classList.toggle('jar--visible', entry.isIntersecting && !reduceMotion);
-        });
-      },
-      { threshold: 0.15 }
-    );
-    document.querySelectorAll('.jar').forEach((j) => jarObserver.observe(j));
   } else {
     document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-in'));
-    document.querySelectorAll('.jar').forEach((j) => j.classList.add('jar--visible'));
   }
 
   /* Las tarjetas también aparecen escalonadas */

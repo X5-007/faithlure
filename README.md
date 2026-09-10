@@ -10,10 +10,10 @@ programas: se sube tal cual y funciona.
 | `catalogo.js` | **El único archivo que necesitas editar.** Textos, categorías, productos, precios y contacto. |
 | `index.html` | Estructura de la página (el orden de las secciones). |
 | `style.css` | Todo el diseño: colores, tipografías, espaciados, responsive. |
-| `script.js` | Dibuja el catálogo, arma los botes 3D, los filtros y la lista de pedido. |
+| `script.js` | Dibuja el catálogo, los filtros, la ficha del producto y la lista de pedido. |
 | `img/faithlure-logo.svg` | El logo en línea (versión suelta). |
 | `img/faithlure-mark.svg` | El logo sobre fondo oscuro, se usa como ícono de pestaña. |
-| `img/productos/` | Carpeta donde puedes poner las fotos reales de los productos. |
+| `img/productos/` | Las fotos de los productos, una por cada uno. |
 
 > El logo es una reconstrucción del original en SVG. Si tienes el archivo
 > oficial, reemplaza los dos archivos de `img/` conservando los mismos nombres.
@@ -46,37 +46,35 @@ Copia un bloque completo de `products`, pégalo debajo y cambia sus datos:
 },
 ```
 
-### Cambiar el envase 3D de un producto
+### Cambiar la foto de un producto
 
-Cada producto trae un bloque `model` con los colores de su envase real:
+1. Guarda la imagen en `img/productos/` (por ejemplo `mut-creakong.webp`).
+2. En `catalogo.js`, escribe esa ruta en el campo `image` del producto:
 
 ```js
-model: {
-  shape: "bote",          // "bote" (tarro con tapa) o "bolsa" (bolsa de pie)
-  body: "#141414",        // color del envase
-  lid: "#d8232a",         // color de la tapa (solo en "bote")
-  label: "#0d0d0d",       // fondo de la etiqueta
-  ink: "#ffffff",         // color del texto
-  accent: "#cf2027",      // color del nombre y las líneas
-  stripe: "#f2d600",      // opcional: franja vertical de color
-  title: "CreaKong",      // opcional: el nombre tal como va impreso
-},
+image: "img/productos/mut-creakong.webp",
 ```
 
-Si un producto no trae `model`, se usa el envase de respaldo de su categoría.
+Para que se vean parejas, lo ideal es:
+
+- **Fondo transparente** (PNG o WebP), no fondo blanco.
+- Alrededor de **640 px de alto**, con el producto centrado.
+- Formato **WebP**, que pesa mucho menos que PNG y se ve igual.
+
+Si dejas `image: ""`, la tarjeta muestra un marcador con las iniciales de la
+marca en lugar de quedarse vacía.
 
 ### Agregar una categoría nueva
 
 Añade un bloque en `categories` y usa su `id` en los productos que le
-correspondan. Los colores definen cómo se ve el bote 3D de esa categoría:
+correspondan:
 
 ```js
 {
   id: "vitaminas",
   name: "Vitaminas",
   tagline: "Lo que te falta cuando entrenas fuerte.",
-  icon: "shield",                                        // bolt | flame | shake | shield | grid
-  colors: { body: "#2a2724", band: "#c9a15a", cap: "#171512", text: "#171512" },
+  icon: "shield",        // bolt | flame | shake | shield | grid
 },
 ```
 
@@ -104,22 +102,13 @@ whatsappDisplay: "313 - 153 - 6627",
 Todos los botones (cotizar, comprar, flotante y el envío de la lista de pedido)
 se actualizan solos.
 
-### Poner fotos reales
-
-Guarda las imágenes en `img/productos/` (lo ideal: PNG con fondo transparente,
-alrededor de 800 px de alto) y escribe la ruta en el campo `image` del producto.
-Cuando hay foto, la tarjeta la muestra en un marco con inclinación 3D en lugar
-del bote generado.
-
 ---
 
 ## Qué trae la página
 
 - **Catálogo dividido por categorías** con filtros arriba y contador por categoría.
-- **Envases en 3D** generados por código, copiados del envase real de cada
-  producto: tarros con tapa estriada y bolsas de pie, con su etiqueta impresa
-  (marca, nombre, sabor y tamaño). Giran solos y se pueden arrastrar para
-  girarlos a mano dentro de la ficha del producto.
+- **Foto real de cada producto** sobre un fondo de estudio, con sombra y un
+  acercamiento suave al pasar el cursor.
 - **Ficha de producto** con los detalles, disponibilidad, precio y botones.
 - **Lista de pedido**: el cliente agrega varios productos y se envían todos
   juntos en un solo mensaje de WhatsApp, con cantidades. La lista se guarda en
@@ -193,4 +182,4 @@ La página está preparada para crecer sin rehacerla:
   desde la página, la lista de pedido ya tiene los productos y las cantidades
   listos para conectarse a Mercado Pago o Stripe.
 - **Más categorías y productos:** se agregan desde `catalogo.js`.
-- **Fotos reales:** se activan producto por producto con el campo `image`.
+- **Fotos:** se cambian producto por producto con el campo `image`.
