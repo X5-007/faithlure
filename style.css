@@ -492,11 +492,14 @@ button { font: inherit; }
 }
 
 /* -------------------------------------------------------------------------
-   8. BOTE 3D
+   8. ENVASES 3D
    -------------------------------------------------------------------------
-   El bote se arma en JavaScript con varios segmentos girados en círculo.
-   Aquí solo viven la perspectiva, el giro y las sombras.
+   El envase se arma en JavaScript con tiras verticales giradas en círculo
+   (los botes) o con cuatro caras (las bolsas). Aquí viven la perspectiva,
+   el giro, la etiqueta impresa y las sombras del estudio.
    ------------------------------------------------------------------------- */
+
+/* Estudio: el "set" donde se fotografía el producto */
 .stage {
   position: relative;
   width: 100%;
@@ -504,25 +507,25 @@ button { font: inherit; }
   aspect-ratio: 1 / 1.05;
   display: grid;
   place-items: center;
-  perspective: 1100px;
-}
-.stage::after {
-  content: "";
-  position: absolute;
-  bottom: 12%;
-  width: 62%;
-  height: 26px;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.55), transparent 70%);
-  filter: blur(6px);
+  perspective: 1200px;
 }
 .stage::before {
   content: "";
   position: absolute;
-  width: 78%;
+  width: 84%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(201, 161, 90, 0.20), transparent 66%);
+  background: radial-gradient(circle, rgba(201, 161, 90, 0.30), rgba(201, 161, 90, 0.06) 48%, transparent 70%);
+}
+.stage::after {
+  content: "";
+  position: absolute;
+  bottom: 13%;
+  width: 54%;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.6), transparent 70%);
+  filter: blur(7px);
 }
 
 .jar3d {
@@ -548,44 +551,88 @@ button { font: inherit; }
   to   { transform: rotateX(-8deg) rotateY(360deg); }
 }
 
-.jar__seg {
+/* Piezas del envase */
+.mdl__part {
   position: absolute;
-  top: 0;
   left: 50%;
+  width: 0;
+  transform-style: preserve-3d;
+}
+.mdl__seg {
+  position: absolute;
+  left: 0;
+  top: 0;
   height: 100%;
   backface-visibility: hidden;
 }
-.jar__cap {
+.mdl__disc {
   position: absolute;
   left: 50%;
   border-radius: 50%;
-  transform-style: preserve-3d;
 }
-.jar__label {
+/* --- Etiqueta impresa del producto --- */
+.plabel {
   position: absolute;
   left: 50%;
-  top: 32%;
-  width: 74%;
-  transform: translateX(-50%) translateZ(calc(var(--jar-r, 62px) + 1px));
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.18em;
+  padding: 0.45em 0.5em 0.5em 0.6em;
+  line-height: 1.05;
+  text-align: left;
   pointer-events: none;
   backface-visibility: hidden;
+  overflow: hidden;
 }
-.jar__label b {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 0.86rem;
-  line-height: 1.15;
-  letter-spacing: 0.02em;
+.plabel__stripe {
+  position: absolute;
+  left: 0;
+  top: -0.35em;
+  bottom: -0.35em;
+  width: 0.26em;
+  border-radius: 1px;
 }
-.jar__label i {
-  display: block;
-  font-style: normal;
-  font-size: 0.56rem;
-  letter-spacing: 0.2em;
+.plabel__brand {
+  font-family: var(--font-body);
+  font-size: 0.5em;
+  font-weight: 700;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  opacity: 0.7;
-  margin-top: 4px;
+  opacity: 0.72;
+}
+.plabel__name {
+  font-family: var(--font-body);
+  font-size: var(--name-size, 1.28em);
+  max-width: 100%;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  color: var(--accent);
+  transform: scaleX(0.94);
+  transform-origin: left center;
+  line-height: 0.98;
+}
+.plabel__bar {
+  width: 2.4em;
+  height: 0.14em;
+  background: var(--accent);
+  border-radius: 1px;
+  margin: 0.16em 0 0.1em;
+}
+.plabel__flavor {
+  font-size: 0.52em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.95;
+}
+.plabel__size {
+  font-size: 0.44em;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.6;
 }
 
 /* Foto real del producto: marco con inclinación 3D */
@@ -728,8 +775,8 @@ button { font: inherit; }
   place-items: center;
   perspective: 900px;
   background:
-    radial-gradient(70% 60% at 50% 42%, rgba(201, 161, 90, 0.14), transparent 70%),
-    linear-gradient(180deg, var(--paper-warm), var(--paper-card));
+    radial-gradient(64% 52% at 50% 38%, #ffffff, transparent 72%),
+    linear-gradient(180deg, var(--paper-card), var(--paper-warm));
   border: 0;
   padding: 0;
   width: 100%;
@@ -906,9 +953,11 @@ button { font: inherit; }
   position: relative;
   display: grid;
   place-items: center;
-  padding: 40px 20px;
-  background: var(--ink);
-  perspective: 1100px;
+  padding: 40px 20px 52px;
+  background:
+    radial-gradient(58% 46% at 50% 36%, #ffffff, transparent 74%),
+    linear-gradient(170deg, var(--paper-card) 20%, var(--paper-warm));
+  perspective: 1200px;
   border-radius: var(--r-lg) 0 0 var(--r-lg);
   cursor: grab;
   touch-action: pan-y;
@@ -918,10 +967,12 @@ button { font: inherit; }
 .detail__stage::before {
   content: "";
   position: absolute;
-  width: 74%;
-  aspect-ratio: 1;
+  bottom: 15%;
+  width: 46%;
+  height: 22px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(201, 161, 90, 0.22), transparent 66%);
+  background: radial-gradient(ellipse at center, rgba(23, 21, 18, 0.34), transparent 72%);
+  filter: blur(6px);
 }
 .detail__drag {
   position: absolute;
@@ -929,7 +980,7 @@ button { font: inherit; }
   font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(243, 239, 232, 0.45);
+  color: var(--text-mute);
 }
 .detail__body { padding: clamp(26px, 3.2vw, 40px); display: flex; flex-direction: column; }
 .detail__brand {
@@ -951,7 +1002,7 @@ button { font: inherit; }
 
 @media (max-width: 760px) {
   .detail { grid-template-columns: 1fr; }
-  .detail__stage { border-radius: var(--r-lg) var(--r-lg) 0 0; padding: 34px 20px 40px; }
+  .detail__stage { border-radius: var(--r-lg) var(--r-lg) 0 0; padding: 30px 20px 50px; }
 }
 
 /* -------------------------------------------------------------------------

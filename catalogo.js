@@ -34,10 +34,9 @@ const CATALOGO = {
       "Creatinas, preentrenos y proteínas seleccionadas una por una. Te decimos cuál te sirve, sin venderte de más.",
     ctaPrimary: "Ver catálogo",
     ctaSecondary: "Cotizar por WhatsApp",
-    // Bote 3D que aparece en el hero (usa los colores de una categoría)
+    // Producto que se muestra en 3D en el hero (usa su "id" de la lista de productos)
     showcase: {
-      label: "Proteína",
-      colorKey: "proteinas",
+      productId: "on-gold-standard",
     },
     stats: [
       { number: "100%", label: "Producto original" },
@@ -81,7 +80,8 @@ const CATALOGO = {
      6. CATEGORÍAS
      -----------------------------------------------------------------------
      El "id" es el que enlaza cada producto con su categoría.
-     "colors" define el bote 3D: cuerpo, etiqueta y tapa.
+     "colors" es el envase de respaldo: se usa solo si un producto no trae
+     su propio bloque "model".
      ----------------------------------------------------------------------- */
   categories: [
     {
@@ -123,8 +123,18 @@ const CATALOGO = {
        short     -> una línea de descripción
        bullets   -> hasta 4 puntos para la ficha
        image     -> opcional. Foto del producto: "img/productos/archivo.png"
-                    Si la dejas vacía se muestra el bote 3D de la categoría.
+                    Si la dejas vacía se muestra el envase 3D.
        stock     -> true / false ("Disponible" o "Bajo pedido")
+       model     -> el envase 3D del producto, copiado del envase real:
+                      shape  -> "bote" (tarro con tapa) o "bolsa" (bolsa de pie)
+                      body   -> color del envase
+                      lid    -> color de la tapa (solo en "bote")
+                      label  -> color de fondo de la etiqueta
+                      ink    -> color del texto de la etiqueta
+                      accent -> color del nombre y las líneas
+                      stripe -> opcional, franja vertical de color a un lado
+                      title  -> opcional, el nombre tal como va impreso
+                    Si no pones "model", se usa el envase de la categoría.
      ----------------------------------------------------------------------- */
   products: [
 
@@ -147,6 +157,10 @@ const CATALOGO = {
         "Ideal para empezar con creatina",
       ],
       image: "",
+      model: {
+        shape: "bote", body: "#17171b", lid: "#d8232a", label: "#0e0e12",
+        ink: "#ffffff", accent: "#e63946", title: "CREATINE MONOHYDRATE",
+      },
     },
     {
       id: "mut-creakong",
@@ -166,6 +180,10 @@ const CATALOGO = {
         "Rinde alrededor de 2 meses",
       ],
       image: "",
+      model: {
+        shape: "bote", body: "#141414", lid: "#191919", label: "#0d0d0d",
+        ink: "#ffffff", accent: "#cf2027", stripe: "#f2d600", title: "CreaKong",
+      },
     },
     {
       id: "nt-creatine-drive",
@@ -185,6 +203,10 @@ const CATALOGO = {
         "5 g por servicio",
       ],
       image: "",
+      model: {
+        shape: "bote", body: "#121212", lid: "#171717", label: "#0d0d0d",
+        ink: "#ffffff", accent: "#d81f26", title: "CREATINE DRIVE",
+      },
     },
 
     /* --------------------------- PREENTRENOS --------------------------- */
@@ -206,6 +228,10 @@ const CATALOGO = {
         "Sabor Fruit Punch",
       ],
       image: "",
+      model: {
+        shape: "bote", body: "#141414", lid: "#191919", label: "#0d0d0d",
+        ink: "#ffffff", accent: "#cf2027", stripe: "#f2d600", title: "PWO",
+      },
     },
     {
       id: "raw-cbum-thavage",
@@ -225,6 +251,10 @@ const CATALOGO = {
         "Sabor tamarindo",
       ],
       image: "",
+      model: {
+        shape: "bote", body: "#46311f", lid: "#f2ede3", label: "#38271a",
+        ink: "#f6efe5", accent: "#cd7f4c", title: "THAVAGE",
+      },
     },
     {
       id: "bucked-up-woke-af",
@@ -244,6 +274,10 @@ const CATALOGO = {
         "Sabor Blue Razz",
       ],
       image: "",
+      model: {
+        shape: "bote", body: "#111214", lid: "#161719", label: "#0c0d0f",
+        ink: "#ffffff", accent: "#62d2e8", title: "WOKE AF",
+      },
     },
     {
       id: "ins-psychotic",
@@ -263,6 +297,10 @@ const CATALOGO = {
         "Sabor Gummy Candy",
       ],
       image: "",
+      model: {
+        shape: "bote", body: "#141417", lid: "#d8232a", label: "#0e0e12",
+        ink: "#ffffff", accent: "#e63946", title: "PSYCHOTIC",
+      },
     },
 
     /* ---------------------------- PROTEÍNAS ---------------------------- */
@@ -284,6 +322,10 @@ const CATALOGO = {
         "Sabor vainilla",
       ],
       image: "",
+      model: {
+        shape: "bote", body: "#191919", lid: "#131313", label: "#1e1e1e",
+        ink: "#f4efe4", accent: "#c9a227", stripe: "#b3122d", title: "100% WHEY",
+      },
     },
     {
       id: "nt-isofit",
@@ -303,14 +345,18 @@ const CATALOGO = {
         "Sabor Chocolate Shake",
       ],
       image: "",
+      model: {
+        shape: "bote", body: "#f3f2ef", lid: "#ffffff", label: "#1c3f94",
+        ink: "#ffffff", accent: "#9dc0f0", title: "ISOFIT",
+      },
     },
     {
       id: "mut-whey",
       category: "proteinas",
       brand: "Mutant",
       name: "Mutant Whey",
-      variant: "Chocolate",
-      size: "5 lbs",
+      variant: "Chocolate Fudge Brownie",
+      size: "5 lbs · 60 servicios",
       price: "",
       badge: "Mejor rendimiento",
       featured: false,
@@ -319,9 +365,13 @@ const CATALOGO = {
       bullets: [
         "5 libras por envase",
         "Pensada para etapa de volumen",
-        "Sabor chocolate",
+        "Sabor Chocolate Fudge Brownie",
       ],
       image: "",
+      model: {
+        shape: "bolsa", body: "#141414", label: "#0d0d0d",
+        ink: "#ffffff", accent: "#cf2027", stripe: "#f2d600", title: "WHEY",
+      },
     },
   ],
 

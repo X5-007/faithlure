@@ -46,6 +46,25 @@ Copia un bloque completo de `products`, pégalo debajo y cambia sus datos:
 },
 ```
 
+### Cambiar el envase 3D de un producto
+
+Cada producto trae un bloque `model` con los colores de su envase real:
+
+```js
+model: {
+  shape: "bote",          // "bote" (tarro con tapa) o "bolsa" (bolsa de pie)
+  body: "#141414",        // color del envase
+  lid: "#d8232a",         // color de la tapa (solo en "bote")
+  label: "#0d0d0d",       // fondo de la etiqueta
+  ink: "#ffffff",         // color del texto
+  accent: "#cf2027",      // color del nombre y las líneas
+  stripe: "#f2d600",      // opcional: franja vertical de color
+  title: "CreaKong",      // opcional: el nombre tal como va impreso
+},
+```
+
+Si un producto no trae `model`, se usa el envase de respaldo de su categoría.
+
 ### Agregar una categoría nueva
 
 Añade un bloque en `categories` y usa su `id` en los productos que le
@@ -97,8 +116,10 @@ del bote generado.
 ## Qué trae la página
 
 - **Catálogo dividido por categorías** con filtros arriba y contador por categoría.
-- **Botes en 3D** generados por código (giran solos y se pueden arrastrar para
-  girarlos a mano dentro de la ficha del producto).
+- **Envases en 3D** generados por código, copiados del envase real de cada
+  producto: tarros con tapa estriada y bolsas de pie, con su etiqueta impresa
+  (marca, nombre, sabor y tamaño). Giran solos y se pueden arrastrar para
+  girarlos a mano dentro de la ficha del producto.
 - **Ficha de producto** con los detalles, disponibilidad, precio y botones.
 - **Lista de pedido**: el cliente agrega varios productos y se envían todos
   juntos en un solo mensaje de WhatsApp, con cantidades. La lista se guarda en

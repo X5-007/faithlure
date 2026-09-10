@@ -71,15 +71,17 @@
   };
 
   /* ====================================================================
-     3. BOTE EN 3D
+     3. ENVASES EN 3D
      ====================================================================
-     Se arma con N segmentos girados en círculo: cada uno es una tira
-     vertical con el degradado del envase. Al girarlos todos se ve
-     como un bote cilíndrico real.
+     Cada producto se dibuja con la forma de su envase real:
+       "bote"  -> tarro cilíndrico con tapa estriada y etiqueta al frente
+       "bolsa" -> bolsa de pie con frente, respaldo y fuelles laterales
+     El cilindro se arma con tiras verticales giradas en círculo; el brillo
+     va pintado en cada tira para que se vea el volumen del plástico.
      ==================================================================== */
-  const SEGMENTS = 20;
+  const SEGMENTS = 22;
 
-  /* Aclara u oscurece un color hexadecimal */
+  /* Aclara (valores positivos) u oscurece (negativos) un color hexadecimal */
   const shade = (hex, amount) => {
     const n = parseInt(String(hex).replace('#', ''), 16);
     const ch = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => {
@@ -89,84 +91,222 @@
     return `rgb(${ch.join(',')})`;
   };
 
-  /**
-   * Construye el bote 3D.
-   * @param {object} opts  colors, labelTop, labelSub, width, height
-   * @returns {HTMLElement} el contenedor .jar3d
-   */
-  function buildJar(opts) {
-    const colors = opts.colors;
-    const w = opts.width || 150;
-    const h = opts.height || 210;
-    const r = w / 2;
-    const segW = (2 * r * Math.tan(Math.PI / SEGMENTS)) + 0.8;
+  /* Luz del estudio: difusa + un reflejo cerrado, como plástico brillante */
+  const lightAt = (angle) => {
+    const c = Math.max(0, Math.cos((angle - 22) * Math.PI / 180));
+    return 0.5 + 0.44 * c + 0.3 * Math.pow(c, 16);
+  };
 
-    const wrap = document.createElement('div');
-    wrap.className = 'jar3d';
-    wrap.style.setProperty('--jar-w', `${w}px`);
-    wrap.style.setProperty('--jar-h', `${h}px`);
-    wrap.style.setProperty('--jar-r', `${r}px`);
+  /* Envase de respaldo por si un producto no trae su propio "model" */
+  const fallbackModel = (p) => {
+    const c = categoryOf(p.category).colors;
+    return { shape: 'bote', body: c.body, lid: c.cap, label: c.band, ink: c.text, accent: c.cap };
+  };
+  const modelOf = (p) => Object.assign(fallbackModel(p), p.model || {});
+
+  /* Un tramo de cilindro (el cuerpo del bote o la tapa) */
+  function cylinder(opts) {
+    const part = document.createElement('div');
+    part.className = 'mdl__part';
+    part.style.top = `${opts.top}px`;
+    part.style.height = `${opts.height}px`;
+
+    const segW = (2 * opts.radius * Math.tan(Math.PI / SEGMENTS)) + 0.8;
+    for (let i = 0; i < SEGMENTS; i++) {
+      const angle = (360 / SEGMENTS) * i;
+      const seg = document.createElement('div');
+      seg.className = 'mdl__seg';
+      seg.style.width = `${segW}px`;
+      seg.style.marginLeft = `${-segW / 2}px`;
+      seg.style.transform = `rotateY(${angle}deg) translateZ(${opts.radius}px)`;
+      seg.style.background = opts.background;
+      seg.style.filter = `brightness(${lightAt(angle).toFixed(3)})`;
+      part.appendChild(seg);
+    }
+    return part;
+  }
+
+  /* Una tapa vista desde arriba (o el fondo del envase) */
+  function discFace(opts) {
+    const el = document.createElement('div');
+    el.className = 'mdl__disc';
+    el.style.width = `${opts.radius * 2}px`;
+    el.style.height = `${opts.radius * 2}px`;
+    el.style.marginLeft = `${-opts.radius}px`;
+    el.style.marginTop = `${-opts.radius}px`;
+    el.style.top = `${opts.top}px`;
+    el.style.transform = 'rotateX(90deg)';
+    el.style.background = opts.background;
+    return el;
+  }
+
+  /* La etiqueta impresa del producto */
+  function productLabel(p, m, opts) {
+    const el = document.createElement('div');
+    el.className = 'plabel';
+    el.style.fontSize = `${opts.fontSize}px`;
+    el.style.width = `${opts.width}px`;
+    el.style.marginLeft = `${-opts.width / 2}px`;
+    el.style.top = `${opts.top}px`;
+    el.style.transform = `translateZ(${opts.depth}px)`;
+    el.style.color = m.ink;
+    el.style.setProperty('--accent', m.accent);
+
+    /* Un nombre largo ("CREATINE MONOHYDRATE") se achica para caber en la
+       etiqueta, igual que en un envase real */
+    const title = m.title || p.name;
+    const longest = Math.max.apply(null, title.split(/\s+/).map((word) => word.length));
+    const emsAvailable = opts.width / opts.fontSize - 1.35;
+    const nameEm = Math.max(0.66, Math.min(1.28, emsAvailable / (longest * 0.66)));
+    el.style.setProperty('--name-size', `${nameEm.toFixed(2)}em`);
+
+    const size = [p.size, p.servings].filter(Boolean).join(' · ');
+    el.innerHTML =
+      (m.stripe ? `<span class="plabel__stripe" style="background:${esc(m.stripe)}"></span>` : '') +
+      `<span class="plabel__brand">${esc(p.brand)}</span>` +
+      `<b class="plabel__name">${esc(title)}</b>` +
+      '<span class="plabel__bar"></span>' +
+      (p.variant ? `<span class="plabel__flavor">${esc(p.variant)}</span>` : '') +
+      (size ? `<span class="plabel__size">${esc(size)}</span>` : '');
+    return el;
+  }
+
+  /* --- Bote: cuerpo + tapa estriada + etiqueta --- */
+  function buildTub(p, m, w, h) {
+    const r = w / 2;
+    const lidH = Math.round(h * 0.16);
+    const lidR = r * 1.035;
+    const bodyTop = Math.round(lidH * 0.72);
+    const bodyH = h - bodyTop;
 
     const jar = document.createElement('div');
     jar.className = 'jar';
 
-    const body = colors.body;
-    const band = colors.band;
-    const cap = colors.cap;
+    /* Cuerpo: sombra bajo la tapa, franja de la etiqueta y base más oscura */
+    jar.appendChild(cylinder({
+      radius: r, height: bodyH, top: bodyTop,
+      background: [
+        'linear-gradient(180deg,',
+        `${shade(m.body, -0.45)} 0 3%,`,
+        `${shade(m.body, 0.03)} 3% 22%,`,
+        `${shade(m.label, 0.02)} 22% 78%,`,
+        `${shade(m.body, 0.02)} 78% 94%,`,
+        `${shade(m.body, -0.42)} 94% 100%)`,
+      ].join(' '),
+    }));
 
-    /* Tapa superior */
-    const lid = document.createElement('div');
-    lid.className = 'jar__cap';
-    lid.style.width = `${w}px`;
-    lid.style.height = `${w}px`;
-    lid.style.marginLeft = `${-r}px`;
-    lid.style.marginTop = `${-r}px`;
-    lid.style.top = '0';
-    lid.style.transform = 'rotateX(90deg)';
-    lid.style.background = `radial-gradient(circle at 38% 34%, ${shade(cap, 0.28)}, ${shade(cap, -0.2)} 78%)`;
-    jar.appendChild(lid);
+    /* Tapa: estrías verticales como las de un tarro real */
+    jar.appendChild(cylinder({
+      radius: lidR, height: lidH, top: 0,
+      background:
+        `repeating-linear-gradient(90deg, ${shade(m.lid, 0.10)} 0 2px, ${shade(m.lid, -0.16)} 2px 4.5px),` +
+        `linear-gradient(180deg, ${shade(m.lid, 0.16)} 0 14%, ${shade(m.lid, -0.30)} 100%)`,
+    }));
+    jar.appendChild(discFace({
+      radius: lidR, top: 0,
+      background: `radial-gradient(circle at 38% 32%, ${shade(m.lid, 0.30)}, ${shade(m.lid, -0.18)} 76%)`,
+    }));
 
-    /* Segmentos del cilindro */
-    for (let i = 0; i < SEGMENTS; i++) {
-      const angle = (360 / SEGMENTS) * i;
+    jar.appendChild(productLabel(p, m, {
+      fontSize: Math.max(6.5, w * 0.077),
+      width: w * 0.70,
+      top: bodyTop + bodyH * 0.26,
+      depth: r + 0.6,
+    }));
+
+    return jar;
+  }
+
+  /* --- Bolsa de pie ---------------------------------------------------
+     Se arma como un cilindro aplastado: la sección es una elipse ancha y
+     poco profunda, así la bolsa se ve inflada por el producto y con los
+     costados redondeados, no como una caja.
+     -------------------------------------------------------------------- */
+  const POUCH_SEGMENTS = 20;
+
+  function buildPouch(p, m, w, h) {
+    const rx = w / 2;                 // mitad del ancho
+    const rz = (w * 0.34) / 2;        // mitad del fondo
+    const jar = document.createElement('div');
+    jar.className = 'jar';
+
+    /* Franja de sello arriba, cuerpo y base reforzada */
+    const background = [
+      'linear-gradient(180deg,',
+      `${shade(m.body, -0.55)} 0 4%,`,
+      `${shade(m.body, -0.18)} 4% 7%,`,
+      `${shade(m.body, 0.02)} 7% 86%,`,
+      `${shade(m.body, -0.26)} 86% 96%,`,
+      `${shade(m.body, -0.55)} 96% 100%)`,
+    ].join(' ');
+
+    const part = document.createElement('div');
+    part.className = 'mdl__part';
+    part.style.top = '0';
+    part.style.height = `${h}px`;
+
+    for (let i = 0; i < POUCH_SEGMENTS; i++) {
+      const t0 = (2 * Math.PI * i) / POUCH_SEGMENTS;
+      const t1 = (2 * Math.PI * (i + 1)) / POUCH_SEGMENTS;
+      const tm = (t0 + t1) / 2;
+
+      const cx = rx * Math.sin(tm);
+      const cz = rz * Math.cos(tm);
+      const segW = Math.hypot(rx * (Math.sin(t1) - Math.sin(t0)), rz * (Math.cos(t1) - Math.cos(t0))) + 0.8;
+      /* Ángulo hacia donde "mira" la cara, según la tangente de la elipse */
+      const facing = Math.atan2(rz * Math.sin(tm), rx * Math.cos(tm)) * 180 / Math.PI;
+
       const seg = document.createElement('div');
-      seg.className = 'jar__seg';
+      seg.className = 'mdl__seg';
       seg.style.width = `${segW}px`;
       seg.style.marginLeft = `${-segW / 2}px`;
-      seg.style.transform = `rotateY(${angle}deg) translateZ(${r}px)`;
-      seg.style.background = [
-        'linear-gradient(180deg,',
-        `${shade(cap, 0.1)} 0 9%,`,
-        `${shade(cap, -0.35)} 9% 11.5%,`,
-        `${shade(body, 0.04)} 11.5% 30%,`,
-        `${band} 30% 66%,`,
-        `${shade(body, 0.02)} 66% 93%,`,
-        `${shade(body, -0.3)} 93% 100%)`,
-      ].join(' ');
-      /* Luz falsa: los segmentos del frente se ven más claros */
-      const light = 0.62 + 0.38 * Math.max(0, Math.cos((angle - 24) * Math.PI / 180));
-      seg.style.filter = `brightness(${light.toFixed(3)})`;
-      jar.appendChild(seg);
+      seg.style.transform = `translate3d(${cx.toFixed(2)}px, 0, ${cz.toFixed(2)}px) rotateY(${facing.toFixed(2)}deg)`;
+      seg.style.background = background;
+      seg.style.filter = `brightness(${lightAt(facing).toFixed(3)})`;
+      part.appendChild(seg);
     }
+    jar.appendChild(part);
 
-    /* Etiqueta al frente */
-    if (opts.labelTop) {
-      const label = document.createElement('div');
-      label.className = 'jar__label';
-      label.style.color = colors.text || '#171512';
-      label.innerHTML =
-        `<b>${esc(opts.labelTop)}</b>` +
-        (opts.labelSub ? `<i>${esc(opts.labelSub)}</i>` : '');
-      jar.appendChild(label);
-    }
+    /* Tapa plana del sello, achatada para seguir la elipse */
+    const top = discFace({
+      radius: rx,
+      top: 0,
+      background: `linear-gradient(180deg, ${shade(m.body, -0.5)}, ${shade(m.body, -0.28)})`,
+    });
+    top.style.transform = `rotateX(90deg) scaleY(${(rz / rx).toFixed(3)})`;
+    jar.appendChild(top);
 
-    wrap.appendChild(jar);
+    jar.appendChild(productLabel(p, m, {
+      fontSize: Math.max(6.5, w * 0.072),
+      width: w * 0.76,
+      top: h * 0.28,
+      depth: rz + 0.6,
+    }));
+
+    return jar;
+  }
+
+  /**
+   * Dibuja el envase 3D de un producto.
+   * @param {object} p  el producto
+   * @param {string} size  'sm' para las tarjetas, 'lg' para la ficha
+   */
+  function buildModel(p, size) {
+    const m = modelOf(p);
+    const big = size === 'lg';
+    const w = big ? (m.shape === 'bolsa' ? 172 : 176) : (m.shape === 'bolsa' ? 122 : 124);
+    const h = big ? (m.shape === 'bolsa' ? 256 : 262) : (m.shape === 'bolsa' ? 182 : 184);
+
+    const wrap = document.createElement('div');
+    wrap.className = `jar3d jar3d--${m.shape}`;
+    wrap.style.setProperty('--jar-w', `${w}px`);
+    wrap.style.setProperty('--jar-h', `${h}px`);
+    wrap.appendChild(m.shape === 'bolsa' ? buildPouch(p, m, w, h) : buildTub(p, m, w, h));
     return wrap;
   }
 
   /* Si el producto tiene foto se muestra la foto en un marco 3D */
   function buildVisual(p, size) {
-    const cat = categoryOf(p.category);
     if (p.image) {
       const wrap = document.createElement('div');
       wrap.className = 'photo3d';
@@ -177,13 +317,7 @@
       wrap.appendChild(img);
       return wrap;
     }
-    return buildJar({
-      colors: cat.colors,
-      labelTop: p.name,
-      labelSub: p.brand,
-      width: size === 'lg' ? 190 : 132,
-      height: size === 'lg' ? 268 : 186,
-    });
+    return buildModel(p, size);
   }
 
   /* ====================================================================
@@ -208,17 +342,9 @@
     .map((s) => `<li><strong>${esc(s.number)}</strong><span>${esc(s.label)}</span></li>`)
     .join('');
 
-  /* Bote grande del hero */
-  const showcaseCat = categoryOf(d.hero.showcase.colorKey);
-  $('heroStage').appendChild(
-    buildJar({
-      colors: showcaseCat.colors,
-      labelTop: d.hero.showcase.label || showcaseCat.name,
-      labelSub: d.brand.name,
-      width: 170,
-      height: 240,
-    })
-  );
+  /* Envase grande del hero: un producto real del catálogo */
+  const showcase = productOf(d.hero.showcase.productId) || d.products[0];
+  $('heroStage').appendChild(buildVisual(showcase, 'lg'));
   $('heroStageHint').textContent = `${d.brand.claim} · ${d.brand.location}`;
 
   /* ====================================================================
