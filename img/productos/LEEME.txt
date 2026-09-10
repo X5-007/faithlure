@@ -1,0 +1,9 @@
+Pon aquí las fotos de tus productos.
+
+Recomendación: PNG con fondo transparente, alrededor de 800 px de alto.
+
+Después escribe la ruta en el campo "image" del producto, dentro de catalogo.js:
+
+    image: "img/productos/gold-standard-vainilla.png",
+
+Si dejas el campo vacío ("") se muestra el bote 3D generado por la página.

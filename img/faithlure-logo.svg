@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="FaithLure">
+  <g fill="currentColor">
+    <!-- Asta vertical: punta arriba, daga abajo -->
+    <polygon points="43,22 50,5 57,22 57,74 50,96 43,74"/>
+    <!-- Brazo horizontal en flecha -->
+    <polygon points="24,38 7,45.5 24,53 76,53 93,45.5 76,38"/>
+    <!-- Bloque superior: punta a 45 grados hacia el asta, canto recto al exterior -->
+    <polygon points="62,13 87,13 87,30 74,30 62,18"/>
+    <!-- Bloque inferior: la misma pieza girada -->
+    <polygon points="62,79 87,79 87,62 74,62 62,74"/>
+  </g>
+</svg>

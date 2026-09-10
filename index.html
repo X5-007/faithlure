@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FaithLure Supplements — Suplementos deportivos en Colima</title>
+<meta name="description" content="Creatinas, preentrenos y proteínas originales en Colima, México. Cotiza y compra por WhatsApp con asesoría incluida.">
+<meta name="theme-color" content="#171512">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="FaithLure Supplements">
+<meta property="og:description" content="Creatinas, preentrenos y proteínas originales en Colima, México. Cotiza y compra por WhatsApp.">
+<meta property="og:image" content="img/faithlure-mark.svg">
+
+<link rel="icon" href="img/faithlure-mark.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a href="#top" class="skip-link">Saltar al contenido</a>
+
+<!-- ============================================================
+     NAV
+     ============================================================ -->
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a href="#top" class="nav__brand-link" aria-label="FaithLure Supplements">
+      <span class="nav__mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="currentColor">
+          <polygon points="43,22 50,5 57,22 57,74 50,96 43,74"/>
+          <polygon points="24,38 7,45.5 24,53 76,53 93,45.5 76,38"/>
+          <polygon points="62,13 87,13 87,30 74,30 62,18"/>
+          <polygon points="62,79 87,79 87,62 74,62 62,74"/>
+        </svg>
+      </span>
+      <span class="nav__brand-text">
+        <span class="nav__brand" id="navBrand"></span>
+        <span class="nav__role" id="navRole"></span>
+      </span>
+    </a>
+
+    <nav class="nav__links" id="navLinks" aria-label="Navegación principal">
+      <a href="#catalogo">Catálogo</a>
+      <a href="#como-comprar">Cómo comprar</a>
+      <a href="#asesoria">Asesoría</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+
+    <a href="#" class="btn btn--primary btn--sm btn--glow nav__cta" id="navCta">WhatsApp</a>
+
+    <button class="nav__toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============================================================
+       HERO
+       ============================================================ -->
+  <section class="hero">
+    <span class="hero__glow" aria-hidden="true"></span>
+    <span class="hero__grid-lines" aria-hidden="true"></span>
+
+    <div class="hero__inner">
+      <div class="hero__content reveal">
+        <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span><span id="heroEyebrow"></span></p>
+        <h1 class="hero__headline" id="heroHeadline"></h1>
+        <p class="hero__sub" id="heroSub"></p>
+
+        <div class="hero__ctas">
+          <a href="#catalogo" class="btn btn--primary btn--lg btn--glow" id="heroCtaPrimary"></a>
+          <a href="#" class="btn btn--outline btn--lg" id="heroCtaSecondary"></a>
+        </div>
+
+        <ul class="hero__stats" id="heroStats"></ul>
+      </div>
+
+      <div class="hero__stage reveal reveal--delay">
+        <div class="stage" id="heroStage" aria-hidden="true"></div>
+        <p class="stage__hint" id="heroStageHint"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CONFIANZA
+       ============================================================ -->
+  <section class="section section--tight section--alt" aria-label="Por qué comprar aquí">
+    <div class="container">
+      <ul class="trust reveal" id="trustList"></ul>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CATÁLOGO
+       ============================================================ -->
+  <section class="section" id="catalogo">
+    <div class="container">
+      <header class="section__head reveal">
+        <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span><span id="catalogEyebrow"></span></p>
+        <h2 class="section__title" id="catalogTitle"></h2>
+        <p class="lead" id="catalogText"></p>
+      </header>
+
+      <div class="filters reveal" id="filters" role="tablist" aria-label="Categorías"></div>
+
+      <div class="catalog" id="catalogGroups"></div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CÓMO COMPRAR
+       ============================================================ -->
+  <section class="section section--ink" id="como-comprar">
+    <div class="container">
+      <header class="section__head reveal">
+        <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span><span id="howEyebrow"></span></p>
+        <h2 class="section__title" id="howTitle"></h2>
+      </header>
+      <ol class="steps reveal" id="howSteps"></ol>
+      <p class="steps__note" id="howNote"></p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ASESORÍA / COACH
+       ============================================================ -->
+  <section class="section" id="asesoria">
+    <div class="container">
+      <div class="coach reveal">
+        <div class="coach__text">
+          <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span><span id="coachEyebrow"></span></p>
+          <h2 class="section__title" id="coachTitle"></h2>
+          <p class="lead" id="coachText"></p>
+        </div>
+        <div class="coach__action">
+          <a href="#" class="btn btn--ink btn--lg" id="coachCta" target="_blank" rel="noopener"></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CONTACTO
+       ============================================================ -->
+  <section class="section section--alt" id="contacto">
+    <div class="container">
+      <div class="contact reveal">
+        <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span><span id="contactEyebrow"></span></p>
+        <h2 class="section__title" id="contactTitle"></h2>
+        <p class="lead" id="contactText"></p>
+
+        <a href="#" class="btn btn--primary btn--lg btn--glow contact__wa" id="contactWhatsapp"></a>
+
+        <ul class="contact__meta" id="contactMeta"></ul>
+        <ul class="contact__social" id="contactSocial"></ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer class="footer">
+  <div class="container footer__inner">
+    <div class="footer__brand">
+      <span class="footer__mark" aria-hidden="true">
+        <svg viewBox="0 0 100 100" fill="currentColor">
+          <polygon points="43,22 50,5 57,22 57,74 50,96 43,74"/>
+          <polygon points="24,38 7,45.5 24,53 76,53 93,45.5 76,38"/>
+          <polygon points="62,13 87,13 87,30 74,30 62,18"/>
+          <polygon points="62,79 87,79 87,62 74,62 62,74"/>
+        </svg>
+      </span>
+      <div>
+        <p class="footer__name" id="footerName"></p>
+        <p class="footer__text" id="footerText"></p>
+      </div>
+    </div>
+    <p class="footer__legal" id="footerLegal"></p>
+    <p class="footer__copy" id="footerCopy"></p>
+  </div>
+</footer>
+
+<!-- ============================================================
+     FICHA DE PRODUCTO EN 3D (se abre al tocar una tarjeta)
+     ============================================================ -->
+<div class="modal" id="productModal" hidden>
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modalName">
+    <button class="modal__close" id="modalClose" aria-label="Cerrar ficha"></button>
+    <div class="modal__body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     LISTA DE PEDIDO
+     ============================================================ -->
+<div class="cart" id="cart" hidden>
+  <div class="cart__backdrop" data-close></div>
+  <aside class="cart__panel" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+    <header class="cart__head">
+      <h2 class="cart__title" id="cartTitle">Tu lista de pedido</h2>
+      <button class="cart__close" id="cartClose" aria-label="Cerrar lista"></button>
+    </header>
+    <div class="cart__items" id="cartItems"></div>
+    <footer class="cart__foot">
+      <p class="cart__note" id="cartNote"></p>
+      <a href="#" class="btn btn--primary btn--block btn--lg btn--glow" id="cartSend"></a>
+      <button class="cart__clear" id="cartClear" type="button">Vaciar lista</button>
+    </footer>
+  </aside>
+</div>
+
+<!-- ============================================================
+     BOTONES FLOTANTES
+     ============================================================ -->
+<div class="fabs">
+  <button class="fab fab--cart" id="cartFab" type="button" hidden>
+    <span class="fab__icon" aria-hidden="true"></span>
+    <span class="fab__text">Tu pedido</span>
+    <span class="fab__count" id="cartCount">0</span>
+  </button>
+  <a href="#" class="fab fab--wa" id="whatsappFab" aria-label="Escribir por WhatsApp"></a>
+</div>
+
+<!-- Aviso corto al agregar un producto -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="catalogo.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
