@@ -284,7 +284,7 @@
   });
 
   /* ====================================================================
-     7. FICHA EN 3D (modal con giro manual)
+     7. FICHA DEL PRODUCTO (modal)
      ==================================================================== */
   const modal = $('productModal');
   const modalBody = $('modalBody');
@@ -477,7 +477,43 @@
   }
 
   /* ====================================================================
-     9. CÓMO COMPRAR
+     9. ENVÍOS Y SORTEO
+     ==================================================================== */
+  function bandaHTML(b, tipo, extra) {
+    return `
+      <article class="band band--${tipo}">
+        <div class="band__text">
+          <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span><span>${esc(b.eyebrow)}</span></p>
+          <h2 class="band__title">${esc(b.title)}</h2>
+          <p class="band__note">${esc(b.text)}</p>
+          ${extra || ''}
+        </div>
+        <p class="band__stat">
+          <strong>${esc(b.statNumber)}</strong>
+          <span>${esc(b.statLabel)}</span>
+        </p>
+      </article>`;
+  }
+
+  const bandas = [];
+  if (d.shipping && d.shipping.enabled) {
+    bandas.push(bandaHTML(d.shipping, 'light'));
+  }
+  if (d.raffle && d.raffle.enabled) {
+    const cta = d.raffle.ctaText
+      ? `<a class="btn btn--primary btn--glow band__cta" href="${waLink(
+          `Hola ${d.brand.name}, quiero apartar mi lugar en el sorteo de la proteína.`
+        )}" target="_blank" rel="noopener">${icons.whatsapp}<span>${esc(d.raffle.ctaText)}</span></a>`
+      : '';
+    bandas.push(bandaHTML(d.raffle, 'ink', cta));
+  }
+  if (bandas.length) {
+    $('bands').innerHTML = bandas.join('');
+    $('envios').hidden = false;
+  }
+
+  /* ====================================================================
+     10. CÓMO COMPRAR
      ==================================================================== */
   if (d.howTo && d.howTo.enabled) {
     $('howEyebrow').textContent = d.howTo.eyebrow;
@@ -499,7 +535,7 @@
   }
 
   /* ====================================================================
-     10. ASESORÍA / COACH
+     11. ASESORÍA / COACH
      ==================================================================== */
   if (d.coach && d.coach.enabled) {
     $('coachEyebrow').textContent = d.coach.eyebrow;
@@ -514,7 +550,7 @@
   }
 
   /* ====================================================================
-     11. CONTACTO Y FOOTER
+     12. CONTACTO Y FOOTER
      ==================================================================== */
   $('contactEyebrow').textContent = d.contact.eyebrow;
   $('contactTitle').innerHTML = emphasizeTail(d.contact.title, 1);
@@ -544,7 +580,7 @@
   $('footerCopy').textContent = `© ${new Date().getFullYear()} ${d.brand.name}. Todos los derechos reservados.`;
 
   /* ====================================================================
-     12. NAVEGACIÓN
+     13. NAVEGACIÓN
      ==================================================================== */
   const nav = $('nav');
   const navLinks = $('navLinks');
@@ -585,7 +621,7 @@
   }
 
   /* ====================================================================
-     13. APARICIÓN AL HACER SCROLL + GIRO SOLO DE LO VISIBLE
+     14. APARICIÓN AL HACER SCROLL
      ==================================================================== */
   if ('IntersectionObserver' in window) {
     const revealObserver = new IntersectionObserver(
@@ -625,7 +661,7 @@
   });
 
   /* ====================================================================
-     14. TECLADO
+     15. TECLADO
      ==================================================================== */
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
@@ -634,7 +670,7 @@
   });
 
   /* ====================================================================
-     15. GOOGLE ANALYTICS (opcional)
+     16. GOOGLE ANALYTICS (opcional)
      ==================================================================== */
   if (d.analytics && d.analytics.enabled && d.analytics.measurementId) {
     const s = document.createElement('script');

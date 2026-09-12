@@ -75,7 +75,7 @@ const CATALOGO = {
   showPrices: true,
   priceSoonLabel: "Precio a consultar",
   priceSoonNote: "Cotiza sin compromiso por WhatsApp",
-  currencyNote: "Precios en MXN",
+  currencyNote: "Precios en MXN · Sujetos a disponibilidad y cambio sin previo aviso",
 
   /* -----------------------------------------------------------------------
      6. CATÁLOGO — TÍTULOS DE LA SECCIÓN
@@ -280,8 +280,8 @@ const CATALOGO = {
       brand: "Optimum Nutrition",
       name: "100% Whey Gold Standard",
       variant: "Vainilla",
-      size: "2 lbs",
-      price: "",
+      size: "899 g · 29 servicios",
+      price: "$880",
       badge: "Más vendido",
       featured: true,
       stock: true,
@@ -299,8 +299,8 @@ const CATALOGO = {
       brand: "Nutrex",
       name: "Isofit",
       variant: "Chocolate Shake",
-      size: "2.2 lbs",
-      price: "",
+      size: "2.2 lbs · 30 servicios",
+      price: "$850",
       badge: "",
       featured: false,
       stock: true,
@@ -319,7 +319,7 @@ const CATALOGO = {
       name: "Mutant Whey",
       variant: "Chocolate Fudge Brownie",
       size: "5 lbs · 60 servicios",
-      price: "",
+      price: "$1,130",
       badge: "Mejor rendimiento",
       featured: false,
       stock: true,
@@ -334,7 +334,32 @@ const CATALOGO = {
   ],
 
   /* -----------------------------------------------------------------------
-     9. CÓMO COMPRAR (3 pasos)
+     9. ENVÍOS Y SORTEO (las dos bandas debajo del catálogo)
+     -----------------------------------------------------------------------
+     Cualquiera de las dos se apaga con enabled: false.
+     Cuando el sorteo termine, ponle enabled: false y desaparece de la página.
+     ----------------------------------------------------------------------- */
+  shipping: {
+    enabled: true,
+    eyebrow: "Envíos",
+    title: "Enviamos a toda la República Mexicana.",
+    text: "Paquetería con guía rastreable. Entrega en mano dentro de Colima.",
+    statNumber: "2–5",
+    statLabel: "días hábiles",
+  },
+
+  raffle: {
+    enabled: true,
+    eyebrow: "Sorteo",
+    title: "Con la compra de cualquier producto entras al sorteo de una proteína.",
+    text: "Solo participan las primeras 25 personas.",
+    statNumber: "25",
+    statLabel: "lugares",
+    ctaText: "Apartar mi lugar",
+  },
+
+  /* -----------------------------------------------------------------------
+     10. CÓMO COMPRAR (3 pasos)
      ----------------------------------------------------------------------- */
   howTo: {
     enabled: true,
@@ -349,7 +374,7 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     10. BLOQUE DEL COACH (enlace a tu página de entrenamiento)
+     11. BLOQUE DEL COACH (enlace a tu página de entrenamiento)
      ----------------------------------------------------------------------- */
   coach: {
     enabled: true,
@@ -363,7 +388,7 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     11. CONTACTO
+     12. CONTACTO
      ----------------------------------------------------------------------- */
   contact: {
     eyebrow: "Contacto",
@@ -385,7 +410,7 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     12. GOOGLE ANALYTICS (opcional)
+     13. GOOGLE ANALYTICS (opcional)
      ----------------------------------------------------------------------- */
   analytics: {
     enabled: false,

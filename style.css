@@ -1042,7 +1042,77 @@ button { font: inherit; }
 .cart__clear:hover { color: var(--clay); }
 
 /* -------------------------------------------------------------------------
-   15. CÓMO COMPRAR
+   15. ENVÍOS Y SORTEO
+   ------------------------------------------------------------------------- */
+#envios[hidden] { display: none; }
+
+.bands { display: grid; gap: clamp(14px, 1.8vw, 20px); }
+
+.band {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: clamp(20px, 3vw, 40px);
+  align-items: center;
+  padding: clamp(24px, 3vw, 38px);
+  border-radius: var(--r-lg);
+  border-left: 4px solid var(--bronze);
+}
+.band--light { background: var(--paper-warm); border-left-color: var(--bronze); }
+.band--ink {
+  background: var(--ink);
+  border-left-color: var(--gold);
+  --text: var(--text-onink);
+  --text-soft: var(--text-onink-soft);
+  color: var(--text-onink);
+}
+.band--ink .eyebrow { color: var(--gold); }
+
+.band__title {
+  font-size: clamp(1.25rem, 1rem + 1.1vw, 1.75rem);
+  margin-bottom: 10px;
+  max-width: 26ch;
+}
+.band--ink .band__title { color: var(--text-onink); }
+.band__note { font-size: 0.92rem; max-width: 54ch; }
+.band__cta { margin-top: 20px; }
+
+/* El número grande de la derecha */
+.band__stat {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: clamp(14px, 2vw, 22px) clamp(18px, 2.4vw, 30px);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  text-align: center;
+  flex-shrink: 0;
+}
+.band--ink .band__stat { border-color: rgba(201, 161, 90, 0.38); }
+.band__stat strong {
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 1.4rem + 1.6vw, 2.7rem);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--bronze);
+  letter-spacing: -0.02em;
+}
+.band--ink .band__stat strong { color: var(--gold); }
+.band__stat span {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-mute);
+}
+.band--ink .band__stat span { color: var(--text-onink-soft); }
+
+@media (max-width: 680px) {
+  .band { grid-template-columns: 1fr; justify-items: start; }
+  .band__stat { justify-self: stretch; }
+}
+
+/* -------------------------------------------------------------------------
+   16. CÓMO COMPRAR
    ------------------------------------------------------------------------- */
 .steps {
   display: grid;
@@ -1071,7 +1141,7 @@ button { font: inherit; }
 @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
 
 /* -------------------------------------------------------------------------
-   16. ASESORÍA / COACH
+   17. ASESORÍA / COACH
    ------------------------------------------------------------------------- */
 .coach {
   display: grid;
@@ -1088,7 +1158,7 @@ button { font: inherit; }
 @media (max-width: 760px) { .coach { grid-template-columns: 1fr; } }
 
 /* -------------------------------------------------------------------------
-   17. CONTACTO
+   18. CONTACTO
    ------------------------------------------------------------------------- */
 .contact { max-width: 620px; margin: 0 auto; text-align: center; }
 .contact .eyebrow { justify-content: center; }
@@ -1120,7 +1190,7 @@ button { font: inherit; }
 .contact__social svg { width: 18px; height: 18px; }
 
 /* -------------------------------------------------------------------------
-   18. FOOTER
+   19. FOOTER
    ------------------------------------------------------------------------- */
 .footer { background: var(--ink); color: var(--text-onink-soft); padding-block: clamp(40px, 5vw, 62px); }
 .footer__inner { display: grid; gap: 18px; }
@@ -1145,7 +1215,7 @@ button { font: inherit; }
 .footer__copy { font-size: 0.76rem; opacity: 0.6; }
 
 /* -------------------------------------------------------------------------
-   19. BOTONES FLOTANTES Y AVISOS
+   20. BOTONES FLOTANTES Y AVISOS
    ------------------------------------------------------------------------- */
 .fabs {
   position: fixed;
@@ -1234,14 +1304,14 @@ button { font: inherit; }
 .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
 
 /* -------------------------------------------------------------------------
-   20. APARICIÓN AL HACER SCROLL
+   21. APARICIÓN AL HACER SCROLL
    ------------------------------------------------------------------------- */
 .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
 .reveal.is-in { opacity: 1; transform: none; }
 .reveal--delay { transition-delay: 0.12s; }
 
 /* -------------------------------------------------------------------------
-   21. ACCESIBILIDAD Y IMPRESIÓN
+   22. ACCESIBILIDAD Y IMPRESIÓN
    ------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
