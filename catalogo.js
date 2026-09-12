@@ -25,13 +25,23 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     2. HERO (primer bloque al entrar)
+     2. AVISO SUPERIOR (la barra delgada arriba de todo)
+     -----------------------------------------------------------------------
+     Ponlo en enabled: false si quieres quitar la barra.
+     ----------------------------------------------------------------------- */
+  announcement: {
+    enabled: true,
+    text: "Entrega en todo Colima · Envíos a toda la República · Pago al recibir",
+  },
+
+  /* -----------------------------------------------------------------------
+     3. HERO (primer bloque al entrar)
      ----------------------------------------------------------------------- */
   hero: {
     eyebrow: "Suplementación deportiva · Colima, México",
     headline: "Suplementos originales para entrenar en serio.",
     subheadline:
-      "Creatinas, preentrenos y proteínas seleccionadas una por una. Te decimos cuál te sirve, sin venderte de más.",
+      "Creatinas, preentrenos y proteínas seleccionadas una por una. Producto sellado, entrega en Colima y envíos a toda la República.",
     ctaPrimary: "Ver catálogo",
     ctaSecondary: "Cotizar por WhatsApp",
     // Producto que se muestra en el hero (usa su "id" de la lista de productos)
@@ -41,34 +51,34 @@ const CATALOGO = {
     stats: [
       { number: "100%", label: "Producto original" },
       { number: "24 h", label: "Respuesta por WhatsApp" },
-      { number: "Colima", label: "Entrega local" },
+      { number: "Colima", label: "Entrega local y envíos" },
     ],
   },
 
   /* -----------------------------------------------------------------------
-     3. BARRA DE CONFIANZA (4 puntos cortos, debajo del hero)
+     4. BARRA DE CONFIANZA (4 puntos cortos, debajo del hero)
      ----------------------------------------------------------------------- */
   trust: [
     { icon: "shield",  title: "Sellado y original",   text: "Marcas verificadas, nada suelto ni reenvasado." },
     { icon: "advice",  title: "Asesoría incluida",    text: "Te decimos qué tomar según tu entrenamiento." },
-    { icon: "truck",   title: "Entrega en Colima",    text: "Punto de entrega acordado o envío nacional." },
+    { icon: "truck",   title: "Entrega en todo Colima", text: "Punto de entrega a convenir. Envíos a toda la República." },
     { icon: "wallet",  title: "Pago al recibir",      text: "Sin pagos en línea. Se cierra todo por WhatsApp." },
   ],
 
   /* -----------------------------------------------------------------------
-     4. PRECIOS
+     5. PRECIOS
      -----------------------------------------------------------------------
      showPrices: false -> se muestra "Precio a consultar" y el botón de cotizar.
                           El espacio del precio queda reservado igual.
      showPrices: true  -> se muestra el campo "price" de cada producto.
      ----------------------------------------------------------------------- */
-  showPrices: false,
+  showPrices: true,
   priceSoonLabel: "Precio a consultar",
   priceSoonNote: "Cotiza sin compromiso por WhatsApp",
   currencyNote: "Precios en MXN",
 
   /* -----------------------------------------------------------------------
-     5. CATÁLOGO — TÍTULOS DE LA SECCIÓN
+     6. CATÁLOGO — TÍTULOS DE LA SECCIÓN
      ----------------------------------------------------------------------- */
   catalog: {
     eyebrow: "Catálogo",
@@ -77,7 +87,7 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     6. CATEGORÍAS
+     7. CATEGORÍAS
      -----------------------------------------------------------------------
      El "id" es el que enlaza cada producto con su categoría.
      ----------------------------------------------------------------------- */
@@ -103,7 +113,7 @@ const CATALOGO = {
   ],
 
   /* -----------------------------------------------------------------------
-     7. PRODUCTOS
+     8. PRODUCTOS
      -----------------------------------------------------------------------
      Campos de cada producto:
        id        -> nombre corto sin espacios (debe ser único)
@@ -132,7 +142,7 @@ const CATALOGO = {
       name: "ACS Creatine",
       variant: "Sin sabor",
       size: "60 servicios",
-      price: "",
+      price: "$450",
       badge: "Más vendido",
       featured: true,
       stock: true,
@@ -150,8 +160,8 @@ const CATALOGO = {
       brand: "Mutant",
       name: "CreaKong",
       variant: "Sin sabor",
-      size: "300 g",
-      price: "",
+      size: "300 g · 75 porciones",
+      price: "$370",
       badge: "",
       featured: false,
       stock: true,
@@ -170,7 +180,7 @@ const CATALOGO = {
       name: "Creatine Drive Black",
       variant: "Sin sabor",
       size: "300 g",
-      price: "",
+      price: "$380",
       badge: "",
       featured: false,
       stock: true,
@@ -190,8 +200,8 @@ const CATALOGO = {
       brand: "Mutant",
       name: "PWO",
       variant: "Fruit Punch",
-      size: "60 servicios",
-      price: "",
+      size: "270 g · 60 porciones",
+      price: "$430",
       badge: "Rinde más",
       featured: false,
       stock: true,
@@ -212,7 +222,7 @@ const CATALOGO = {
       name: "CBUM Thavage",
       variant: "Tamarindo",
       size: "40 servicios",
-      price: "",
+      price: "$780",
       badge: "Más vendido",
       featured: true,
       stock: true,
@@ -231,7 +241,7 @@ const CATALOGO = {
       name: "Woke AF",
       variant: "Blue Razz",
       size: "30 servicios",
-      price: "",
+      price: "$750",
       badge: "Alta intensidad",
       featured: false,
       stock: true,
@@ -250,7 +260,7 @@ const CATALOGO = {
       name: "Psychotic",
       variant: "Gummy Candy",
       size: "35 servicios",
-      price: "",
+      price: "$480",
       badge: "",
       featured: false,
       stock: true,
@@ -324,7 +334,7 @@ const CATALOGO = {
   ],
 
   /* -----------------------------------------------------------------------
-     8. CÓMO COMPRAR (3 pasos)
+     9. CÓMO COMPRAR (3 pasos)
      ----------------------------------------------------------------------- */
   howTo: {
     enabled: true,
@@ -333,13 +343,13 @@ const CATALOGO = {
     steps: [
       { number: "01", title: "Arma tu pedido", text: "Agrega los productos que te interesan a tu lista." },
       { number: "02", title: "Envíalo por WhatsApp", text: "Con un toque se manda tu lista completa con cantidades." },
-      { number: "03", title: "Confirmamos y entregamos", text: "Te paso disponibilidad, total y punto de entrega." },
+      { number: "03", title: "Confirmamos y entregamos", text: "Te paso el total y quedamos en el punto de entrega, o te mando la guía si eres de fuera." },
     ],
     note: "Por ahora no hay pagos en línea: todo se cierra por WhatsApp.",
   },
 
   /* -----------------------------------------------------------------------
-     9. BLOQUE DEL COACH (enlace a tu página de entrenamiento)
+     10. BLOQUE DEL COACH (enlace a tu página de entrenamiento)
      ----------------------------------------------------------------------- */
   coach: {
     enabled: true,
@@ -353,7 +363,7 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     10. CONTACTO
+     11. CONTACTO
      ----------------------------------------------------------------------- */
   contact: {
     eyebrow: "Contacto",
@@ -375,7 +385,7 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     11. GOOGLE ANALYTICS (opcional)
+     12. GOOGLE ANALYTICS (opcional)
      ----------------------------------------------------------------------- */
   analytics: {
     enabled: false,

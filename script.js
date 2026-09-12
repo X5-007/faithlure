@@ -109,6 +109,13 @@
   $('whatsappFab').href = waLink();
   $('whatsappFab').innerHTML = icons.whatsapp;
 
+  /* Aviso de cobertura arriba de todo */
+  if (d.announcement && d.announcement.enabled && d.announcement.text) {
+    $('announceText').textContent = d.announcement.text;
+    $('announce').querySelector('.announce__icon').innerHTML = icons.truck;
+    $('announce').hidden = false;
+  }
+
   $('heroEyebrow').textContent = d.hero.eyebrow;
   $('heroHeadline').innerHTML = emphasizeTail(d.hero.headline, 2);
   $('heroSub').textContent = d.hero.subheadline;
@@ -148,14 +155,21 @@
   $('catalogEyebrow').textContent = d.catalog.eyebrow;
   $('catalogTitle').innerHTML = emphasizeTail(d.catalog.title, 2);
   $('catalogText').textContent = d.catalog.text;
+  if (d.showPrices && d.currencyNote) {
+    $('catalogPriceNote').textContent = d.currencyNote;
+    $('catalogPriceNote').hidden = false;
+  }
 
-  /* --- Bloque de precio (con espacio reservado aunque esté oculto) --- */
-  function priceBlock(p) {
+  /* --- Bloque de precio (con espacio reservado aunque esté oculto) ---
+     En la tarjeta solo va el precio: la moneda se aclara una vez arriba.
+     En la ficha sí se repite la moneda, porque se ve sin el resto alrededor. */
+  function priceBlock(p, conMoneda) {
     if (d.showPrices && p.price) {
+      const nota = p.priceNote || (conMoneda ? d.currencyNote : '');
       return `
         <div class="price">
           <span class="price__value">${esc(p.price)}</span>
-          <span class="price__note">${esc(p.priceNote || d.currencyNote || '')}</span>
+          ${nota ? `<span class="price__note">${esc(nota)}</span>` : ''}
         </div>`;
     }
     return `
@@ -296,7 +310,7 @@
           <p class="detail__short">${esc(p.short || '')}</p>
           <ul class="detail__list">${bullets}</ul>
           ${stockBlock(p)}
-          <div class="detail__price">${priceBlock(p)}</div>
+          <div class="detail__price">${priceBlock(p, true)}</div>
           <div class="detail__actions">
             <button class="btn btn--ink" type="button" data-add="${esc(p.id)}">Agregar al pedido</button>
             <a class="btn btn--primary btn--glow" href="${waLink(
