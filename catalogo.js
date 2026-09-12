@@ -46,7 +46,7 @@ const CATALOGO = {
     ctaSecondary: "Cotizar por WhatsApp",
     // Producto que se muestra en el hero (usa su "id" de la lista de productos)
     showcase: {
-      productId: "on-gold-standard",
+      productId: "bucked-up-woke-af",
     },
     stats: [
       { number: "100%", label: "Producto original" },
