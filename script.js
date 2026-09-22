@@ -368,7 +368,7 @@
       return `• ${it.qty} × ${fullName(p)}`;
     });
     return (
-      `Hola ${d.brand.name}, quiero cotizar este pedido:\n\n${lines.join('\n')}\n\n` +
+      `Quiero cotizar este pedido:\n\n${lines.join('\n')}\n\n` +
       '¿Me confirmas disponibilidad y total?'
     );
   }
