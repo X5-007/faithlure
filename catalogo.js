@@ -35,28 +35,7 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     3. HERO (primer bloque al entrar)
-     ----------------------------------------------------------------------- */
-  hero: {
-    eyebrow: "Suplementación deportiva · Colima, México",
-    headline: "Suplementos originales para entrenar en serio.",
-    subheadline:
-      "Creatinas, preentrenos y proteínas seleccionadas una por una. Producto sellado, entrega en Colima y envíos a toda la República.",
-    ctaPrimary: "Ver catálogo",
-    ctaSecondary: "Cotizar por WhatsApp",
-    // Producto que se muestra en el hero (usa su "id" de la lista de productos)
-    showcase: {
-      productId: "bucked-up-woke-af",
-    },
-    stats: [
-      { number: "100%", label: "Producto original" },
-      { number: "24 h", label: "Respuesta por WhatsApp" },
-      { number: "Colima", label: "Entrega local y envíos" },
-    ],
-  },
-
-  /* -----------------------------------------------------------------------
-     4. BARRA DE CONFIANZA (4 puntos cortos, debajo del hero)
+     3. BARRA DE CONFIANZA (4 puntos cortos, arriba del catálogo)
      ----------------------------------------------------------------------- */
   trust: [
     { icon: "shield",  title: "Sellado y original",   text: "Marcas verificadas, nada suelto ni reenvasado." },
@@ -66,7 +45,7 @@ const CATALOGO = {
   ],
 
   /* -----------------------------------------------------------------------
-     5. PRECIOS
+     4. PRECIOS
      -----------------------------------------------------------------------
      showPrices: false -> se muestra "Precio a consultar" y el botón de cotizar.
                           El espacio del precio queda reservado igual.
@@ -78,16 +57,16 @@ const CATALOGO = {
   currencyNote: "Precios en MXN · Sujetos a disponibilidad y cambio sin previo aviso",
 
   /* -----------------------------------------------------------------------
-     6. CATÁLOGO — TÍTULOS DE LA SECCIÓN
+     5. CATÁLOGO — TÍTULOS DE LA SECCIÓN
      ----------------------------------------------------------------------- */
   catalog: {
     eyebrow: "Catálogo",
-    title: "Elige por objetivo, no por moda.",
-    text: "Filtra por categoría y toca cualquier producto para ver su ficha completa.",
+    title: "Suplementos originales, precio directo.",
+    text: "Filtra por categoría y toca cualquier producto para ver su vista rápida.",
   },
 
   /* -----------------------------------------------------------------------
-     7. CATEGORÍAS
+     6. CATEGORÍAS
      -----------------------------------------------------------------------
      El "id" es el que enlaza cada producto con su categoría.
      ----------------------------------------------------------------------- */
@@ -113,7 +92,7 @@ const CATALOGO = {
   ],
 
   /* -----------------------------------------------------------------------
-     8. PRODUCTOS
+     7. PRODUCTOS
      -----------------------------------------------------------------------
      Campos de cada producto:
        id        -> nombre corto sin espacios (debe ser único)
@@ -122,7 +101,12 @@ const CATALOGO = {
        name      -> nombre del producto
        variant   -> sabor o presentación
        size      -> tamaño o servicios
-       price     -> "$000 MXN"  (se ve solo si showPrices es true)
+       price     -> "$000"  (se ve solo si showPrices es true)
+       compareAt -> opcional. El precio ANTERIOR real, por ejemplo "$560".
+                    Si lo pones, la tarjeta muestra el precio tachado y
+                    calcula sola el "-20%". Déjalo vacío si no hay rebaja:
+                    poner un precio anterior que nunca existió es publicidad
+                    engañosa y PROFECO lo sanciona.
        badge     -> distintivo opcional: "Más vendido", "Nuevo", "Últimas piezas"
        featured  -> true resalta la tarjeta
        short     -> una línea de descripción
@@ -334,7 +318,7 @@ const CATALOGO = {
   ],
 
   /* -----------------------------------------------------------------------
-     9. ENVÍOS Y SORTEO (las dos bandas debajo del catálogo)
+     8. ENVÍOS Y SORTEO (las dos bandas debajo del catálogo)
      -----------------------------------------------------------------------
      Cualquiera de las dos se apaga con enabled: false.
      Cuando el sorteo termine, ponle enabled: false y desaparece de la página.
@@ -359,7 +343,7 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     10. CÓMO COMPRAR (3 pasos)
+     9. CÓMO COMPRAR (3 pasos)
      ----------------------------------------------------------------------- */
   howTo: {
     enabled: true,
@@ -374,7 +358,7 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     11. BLOQUE DEL COACH (enlace a tu página de entrenamiento)
+     10. BLOQUE DEL COACH (enlace a tu página de entrenamiento)
      ----------------------------------------------------------------------- */
   coach: {
     enabled: true,
@@ -388,7 +372,7 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     12. CONTACTO
+     11. CONTACTO
      ----------------------------------------------------------------------- */
   contact: {
     eyebrow: "Contacto",
@@ -410,7 +394,7 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     13. GOOGLE ANALYTICS (opcional)
+     12. GOOGLE ANALYTICS (opcional)
      ----------------------------------------------------------------------- */
   analytics: {
     enabled: false,

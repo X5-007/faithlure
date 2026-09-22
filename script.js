@@ -32,6 +32,18 @@
     return `${p.brand} ${p.name}${extra ? ` (${extra})` : ''}`;
   };
 
+  /* Convierte "$1,130" en 1130 para poder comparar precios */
+  const toNumber = (v) => Number(String(v).replace(/[^0-9.]/g, '')) || 0;
+
+  /* Porcentaje de descuento. Devuelve 0 si el producto no trae precio anterior. */
+  const discountPct = (p) => {
+    if (!d.showPrices || !p.price || !p.compareAt) return 0;
+    const antes = toNumber(p.compareAt);
+    const ahora = toNumber(p.price);
+    if (!antes || !ahora || ahora >= antes) return 0;
+    return Math.round((1 - ahora / antes) * 100);
+  };
+
   const categoryOf = (id) => d.categories.find((c) => c.id === id) || d.categories[0];
   const productOf = (id) => d.products.find((p) => p.id === id);
 
@@ -100,7 +112,7 @@
   }
 
   /* ====================================================================
-     4. CABECERA Y HERO
+     4. CABECERA
      ==================================================================== */
   document.title = `${d.brand.name} ${d.brand.tagline} — Suplementos en ${d.brand.location}`;
   $('navBrand').textContent = d.brand.name;
@@ -115,23 +127,6 @@
     $('announce').querySelector('.announce__icon').innerHTML = icons.truck;
     $('announce').hidden = false;
   }
-
-  $('heroEyebrow').textContent = d.hero.eyebrow;
-  $('heroHeadline').innerHTML = emphasizeTail(d.hero.headline, 2);
-  $('heroSub').textContent = d.hero.subheadline;
-  $('heroCtaPrimary').textContent = d.hero.ctaPrimary;
-  const heroCta2 = $('heroCtaSecondary');
-  heroCta2.textContent = d.hero.ctaSecondary;
-  heroCta2.href = waLink();
-
-  $('heroStats').innerHTML = d.hero.stats
-    .map((s) => `<li><strong>${esc(s.number)}</strong><span>${esc(s.label)}</span></li>`)
-    .join('');
-
-  /* Envase grande del hero: un producto real del catálogo */
-  const showcase = productOf(d.hero.showcase.productId) || d.products[0];
-  $('heroStage').appendChild(buildVisual(showcase, 'lg'));
-  $('heroStageHint').textContent = `${d.brand.claim} · ${d.brand.location}`;
 
   /* ====================================================================
      5. BARRA DE CONFIANZA
@@ -160,22 +155,26 @@
     $('catalogPriceNote').hidden = false;
   }
 
-  /* --- Bloque de precio (con espacio reservado aunque esté oculto) ---
-     En la tarjeta solo va el precio: la moneda se aclara una vez arriba.
-     En la ficha sí se repite la moneda, porque se ve sin el resto alrededor. */
-  function priceBlock(p, conMoneda) {
-    if (d.showPrices && p.price) {
-      const nota = p.priceNote || (conMoneda ? d.currencyNote : '');
+  /* --- Bloque de precio ---
+     En la tarjeta va solo el precio; la moneda se aclara una vez arriba.
+     En la vista rápida sí se repite, porque se ve sin el resto alrededor. */
+  function priceBlock(p, conNota) {
+    if (!d.showPrices || !p.price) {
       return `
-        <div class="price">
-          <span class="price__value">${esc(p.price)}</span>
-          ${nota ? `<span class="price__note">${esc(nota)}</span>` : ''}
+        <div class="price price--soon">
+          <span class="price__soon">${esc(d.priceSoonLabel)}</span>
+          <span class="price__note">${esc(d.priceSoonNote)}</span>
         </div>`;
     }
+    const rebajado = discountPct(p) > 0;
+    const nota = p.priceNote || (conNota ? d.currencyNote : '');
     return `
-      <div class="price price--soon">
-        <span class="price__value">${esc(d.priceSoonLabel)}</span>
-        <span class="price__note">${esc(d.priceSoonNote)}</span>
+      <div class="price">
+        <span class="price__row">
+          ${rebajado ? `<s class="price__was">${esc(p.compareAt)}</s>` : ''}
+          <span class="price__now${rebajado ? ' price__now--off' : ''}">${esc(p.price)}</span>
+        </span>
+        ${nota ? `<span class="price__note">${esc(nota)}</span>` : ''}
       </div>`;
   }
 
@@ -185,32 +184,35 @@
       : '<span class="stock">Disponible</span>';
   }
 
-  /* --- Tarjeta de producto --- */
+  /* --- Tarjeta de producto ---
+     Estructura de tienda: foto grande, marca, nombre, precio y un solo
+     botón ancho de "Agregar". El detalle vive en la vista rápida. */
   function buildCard(p) {
     const card = document.createElement('article');
     card.className = `card${p.featured ? ' card--featured' : ''}`;
     card.dataset.category = p.category;
 
-    const meta = [p.variant, p.size].filter(Boolean).map((x) => `<span>${esc(x)}</span>`).join('');
+    const off = discountPct(p);
+    const meta = [p.variant, p.size].filter(Boolean).join(' · ');
 
     card.innerHTML = `
-      ${p.badge ? `<span class="badge ${p.featured ? 'badge--clay' : ''} card__badge">${esc(p.badge)}</span>` : ''}
-      <button class="card__stage" type="button" aria-label="Ver ${esc(fullName(p))} en 3D">
-        <span class="card__zoom" aria-hidden="true">${icons.expand}</span>
+      <div class="card__flags">
+        ${off ? `<span class="flag flag--off">-${off}%</span>` : ''}
+        ${p.badge ? `<span class="flag flag--tag">${esc(p.badge)}</span>` : ''}
+      </div>
+      <button class="card__stage" type="button" aria-label="Vista rápida de ${esc(fullName(p))}">
+        <span class="card__quick" aria-hidden="true">Vista rápida</span>
       </button>
       <div class="card__body">
         <p class="card__brand">${esc(p.brand)}</p>
         <h3 class="card__name">${esc(p.name)}</h3>
-        <p class="card__meta">${meta}</p>
-        <p class="card__short">${esc(p.short || '')}</p>
+        ${meta ? `<p class="card__meta">${esc(meta)}</p>` : ''}
         ${stockBlock(p)}
         ${priceBlock(p)}
-        <div class="card__actions">
-          <button class="btn btn--ink btn--sm" type="button" data-add="${esc(p.id)}">Agregar</button>
-          <a class="btn btn--primary btn--sm btn--glow" href="${waLink(
-            `Hola ${d.brand.name}, quiero cotizar: ${fullName(p)}.`
-          )}" target="_blank" rel="noopener">Cotizar</a>
-        </div>
+        <button class="btn btn--add" type="button" data-add="${esc(p.id)}">Agregar</button>
+        <a class="card__wa" href="${waLink(
+          `Hola ${d.brand.name}, quiero cotizar: ${fullName(p)}.`
+        )}" target="_blank" rel="noopener">${icons.whatsapp}<span>Cotizar por WhatsApp</span></a>
       </div>`;
 
     const stage = card.querySelector('.card__stage');
@@ -297,32 +299,65 @@
     if (!p) return;
     lastFocused = document.activeElement;
 
+    const off = discountPct(p);
+    const meta = [p.variant, p.size].filter(Boolean).join(' · ');
     const bullets = (p.bullets || [])
       .map((b) => `<li>${icons.check}<span>${esc(b)}</span></li>`)
       .join('');
 
     modalBody.innerHTML = `
-      <div class="detail">
-        <div class="detail__stage" id="detailStage"></div>
-        <div class="detail__body">
-          <p class="detail__brand">${esc(p.brand)}</p>
-          <h2 class="detail__name" id="modalName">${esc(p.name)}</h2>
-          <p class="detail__short">${esc(p.short || '')}</p>
-          <ul class="detail__list">${bullets}</ul>
+      <div class="quick">
+        <div class="quick__media" id="detailStage">
+          ${off ? `<span class="flag flag--off quick__flag">-${off}%</span>` : ''}
+        </div>
+        <div class="quick__body">
+          <p class="quick__brand">${esc(p.brand)}</p>
+          <h2 class="quick__name" id="modalName">${esc(p.name)}</h2>
+          ${meta ? `<p class="quick__meta">${esc(meta)}</p>` : ''}
+
+          <div class="quick__price">${priceBlock(p, true)}</div>
+          <p class="quick__shipnote">El envío se cotiza por WhatsApp según tu ciudad. Dentro de Colima, entrega en mano.</p>
+
+          ${p.short ? `<p class="quick__short">${esc(p.short)}</p>` : ''}
+          <ul class="quick__list">${bullets}</ul>
           ${stockBlock(p)}
-          <div class="detail__price">${priceBlock(p, true)}</div>
-          <div class="detail__actions">
-            <button class="btn btn--ink" type="button" data-add="${esc(p.id)}">Agregar al pedido</button>
-            <a class="btn btn--primary btn--glow" href="${waLink(
-              `Hola ${d.brand.name}, quiero cotizar: ${fullName(p)}.`
-            )}" target="_blank" rel="noopener">${icons.whatsapp}<span>Cotizar ahora</span></a>
+
+          <div class="quick__qty">
+            <span class="quick__qtylabel">Cantidad</span>
+            <div class="qty">
+              <button type="button" data-step="-1" aria-label="Quitar uno">${icons.minus}</button>
+              <span id="quickQty" aria-live="polite">1</span>
+              <button type="button" data-step="1" aria-label="Agregar uno">${icons.plus}</button>
+            </div>
           </div>
+
+          <div class="quick__actions">
+            <button class="btn btn--add btn--block" type="button" data-add="${esc(p.id)}">Agregar al pedido</button>
+            <a class="btn btn--wa btn--block" href="${waLink(
+              `Hola ${d.brand.name}, quiero cotizar: ${fullName(p)}.`
+            )}" target="_blank" rel="noopener">${icons.whatsapp}<span>Cotizar por WhatsApp</span></a>
+          </div>
+
+          <p class="quick__legal">${esc(d.footer.legal)}</p>
         </div>
       </div>`;
 
     $('detailStage').appendChild(buildVisual(p, 'lg'));
 
-    modalBody.querySelector('[data-add]').addEventListener('click', () => addToCart(p.id));
+    /* Selector de cantidad: lo que marque aquí es lo que entra al pedido */
+    let cantidad = 1;
+    const salida = $('quickQty');
+    modalBody.querySelectorAll('[data-step]').forEach((boton) => {
+      boton.addEventListener('click', () => {
+        cantidad = Math.max(1, Math.min(99, cantidad + Number(boton.dataset.step)));
+        salida.textContent = String(cantidad);
+      });
+    });
+
+    modalBody.querySelector('[data-add]').addEventListener('click', () => {
+      addToCart(p.id, cantidad);
+      closeDetail();
+    });
 
     modal.hidden = false;
     document.body.classList.add('is-locked');
@@ -368,7 +403,7 @@
       return `• ${it.qty} × ${fullName(p)}`;
     });
     return (
-      `Quiero cotizar este pedido:\n\n${lines.join('\n')}\n\n` +
+      `Hola ${d.brand.name}, quiero cotizar este pedido:\n\n${lines.join('\n')}\n\n` +
       '¿Me confirmas disponibilidad y total?'
     );
   }
@@ -414,13 +449,18 @@
         : 'Sin pagos en línea: se cotiza y se cierra por WhatsApp.';
   }
 
-  function addToCart(id) {
+  function addToCart(id, cantidad) {
+    const n = Math.max(1, Math.min(99, Number(cantidad) || 1));
     const found = order.find((it) => it.id === id);
-    if (found) found.qty += 1;
-    else order.push({ id, qty: 1 });
+    if (found) found.qty = Math.min(99, found.qty + n);
+    else order.push({ id, qty: n });
     saveOrder();
     renderCart();
-    showToast(`${productOf(id).name} agregado a tu pedido`);
+    showToast(
+      n > 1
+        ? `${n} × ${productOf(id).name} agregados a tu pedido`
+        : `${productOf(id).name} agregado a tu pedido`
+    );
   }
 
   cartItemsEl.addEventListener('click', (e) => {
