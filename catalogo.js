@@ -358,17 +358,114 @@ const CATALOGO = {
   },
 
   /* -----------------------------------------------------------------------
-     10. BLOQUE DEL COACH (enlace a tu página de entrenamiento)
+     10. ENTRENAMIENTO (el segundo apartado de la página)
+     -----------------------------------------------------------------------
+     Todo lo del coach vive aquí. Apágalo con enabled: false.
+     showPrices: false oculta los precios de los paquetes y deja solo el
+     botón de cotizar, igual que en la tienda.
      ----------------------------------------------------------------------- */
-  coach: {
+  training: {
     enabled: true,
-    eyebrow: "Asesoría",
-    title: "¿No sabes cuál te toca?",
+    eyebrow: "Entrenamiento",
+    title: "Entrenamiento serio, resultados reales.",
+    coachName: "Damian Torres",
+    coachRole: "Coach de entrenamiento",
+    photo: "img/perfil.png",
     text:
-      "El suplemento no reemplaza el entrenamiento. Si quieres una rutina y un plan que sí avance, entrena conmigo.",
-    ctaText: "Ver planes de entrenamiento",
-    // Cambia esta dirección por el dominio final de tu página de coach
-    ctaUrl: "https://x5-007.github.io/damian-torres-coach/",
+      "Tengo 18 años, soy de Colima y llevo más de 3 años ayudando a personas con su cambio físico personal. No entreno a 5 personas a la vez ni te doy una rutina de internet. Diseño cada plan según tu objetivo, tu nivel y tu progreso, y le doy seguimiento de cerca para que cada sesión valga la pena.",
+
+    pillars: [
+      {
+        icon: "target",
+        title: "Rutinas a tu medida",
+        text: "Cada plan se construye según tu objetivo: bajar grasa, ganar músculo o ambos.",
+      },
+      {
+        icon: "chart",
+        title: "Seguimiento de progreso",
+        text: "Medición de peso, grasa y medidas para saber que el plan está funcionando.",
+      },
+      {
+        icon: "headset",
+        title: "Atención constante",
+        text: "Dudas, ajustes y corrección de técnica sin dejarte solo entre sesiones.",
+      },
+    ],
+
+    packagesTitle: "Elige cómo quieres entrenar.",
+    showPrices: false,
+    priceSoonLabel: "Cotiza por WhatsApp",
+
+    packages: [
+      {
+        tag: "Rutina personalizada",
+        title: "Rutina Enfocada",
+        subtitle: "Tus objetivos, tu transformación.",
+        price: "$349",
+        priceUnit: "Único pago",
+        features: [
+          "Asesoramiento inicial",
+          "Rutina personal (bajar grasa / aumentar músculo)",
+          "Entrenamiento dinámico",
+          "Atención 24/7 por línea (primera semana con la rutina)",
+          "Corrección de técnica",
+        ],
+      },
+      {
+        tag: "Entrenamiento a distancia",
+        title: "A Distancia",
+        subtitle: "Totalmente enfocado, estés donde estés.",
+        price: "$1,199",
+        priceUnit: "2 meses",
+        features: [
+          "Asesoramiento inicial",
+          "Rutina personalizada",
+          "Revisión cada 2 semanas (cambio de rutina)",
+          "Atención por línea durante los 2 meses",
+          "Entrenamiento dinámico",
+          "Seguimiento de progreso",
+          "Corrección de técnica",
+          "Recomendación suplementaria",
+        ],
+      },
+      {
+        tag: "Exclusividad y enfoque en ti",
+        title: "Entrenamiento Personal",
+        subtitle: "5 días a la semana, enfoque 1 a 1.",
+        price: "$799",
+        priceUnit: "Semanal",
+        features: [
+          "Asesoramiento inicial",
+          "Enfoque individual, no grupal",
+          "5 días a la semana · 2 hrs por sesión",
+          "Voy a tu gimnasio más cercano",
+          "Rutina personalizada",
+          "Entrenamiento y corrección presencial",
+          "Atención en línea 24/7",
+          "Medición semanal de grasa, peso y medidas",
+        ],
+      },
+      {
+        tag: "VIP · el máximo enfoque",
+        title: "Atención VIP Exclusiva",
+        subtitle: "Prioridad, seguimiento y resultados trimestrales.",
+        price: "$1,199",
+        priceUnit: "Semanal",
+        highlight: true,
+        features: [
+          "Asesoramiento inicial",
+          "Atención prioritaria",
+          "5 días a la semana · 2 hrs por sesión",
+          "Voy a tu gimnasio más cercano",
+          "Rutina personalizada",
+          "Entrenamiento y corrección presencial",
+          "Atención en línea 24/7",
+          "Medición semanal de grasa, peso y medidas",
+          "+ Seguimiento de progreso durante 3 meses",
+          "+ Sugerencias alimenticias (no dieta)",
+        ],
+      },
+    ],
   },
 
   /* -----------------------------------------------------------------------
@@ -377,7 +474,7 @@ const CATALOGO = {
   contact: {
     eyebrow: "Contacto",
     title: "Pide lo tuyo hoy.",
-    text: "Escríbeme y te digo disponibilidad y precio al momento.",
+    text: "Suplementos o entrenamiento: escríbeme y te contesto al momento.",
     whatsappNumber: "3131536627",       // solo los 10 dígitos
     whatsappDisplay: "313 - 153 - 6627",
     countryCode: "52",                  // México
@@ -387,7 +484,7 @@ const CATALOGO = {
   },
 
   footer: {
-    text: "Suplementación deportiva en Colima, México.",
+    text: "Suplementación deportiva y entrenamiento personal en Colima, México.",
     legal:
       "Los suplementos alimenticios no son medicamentos ni sustituyen una alimentación equilibrada. " +
       "Consulta a un profesional de la salud antes de iniciar cualquier suplementación.",

@@ -60,6 +60,9 @@
      2. ICONOS
      ==================================================================== */
   const icons = {
+    target:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/></svg>',
+    chart:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 20V11M10 20V5M16 20v-6M22 20H2"/></svg>',
+    headset:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M4 13a8 8 0 0 1 16 0v5a2 2 0 0 1-2 2h-1v-6h3M4 18v-5h3v6H5a1 1 0 0 1-1-1z"/></svg>',
     check:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg>',
     close:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     plus:     '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
@@ -114,7 +117,7 @@
   /* ====================================================================
      4. CABECERA
      ==================================================================== */
-  document.title = `${d.brand.name} ${d.brand.tagline} — Suplementos en ${d.brand.location}`;
+  document.title = `${d.brand.name} ${d.brand.tagline} — Suplementos y entrenamiento en ${d.brand.location}`;
   $('navBrand').textContent = d.brand.name;
   $('navRole').textContent = d.brand.tagline;
   $('navCta').href = waLink();
@@ -575,18 +578,66 @@
   }
 
   /* ====================================================================
-     11. ASESORÍA / COACH
+     11. ENTRENAMIENTO
      ==================================================================== */
-  if (d.coach && d.coach.enabled) {
-    $('coachEyebrow').textContent = d.coach.eyebrow;
-    $('coachTitle').innerHTML = emphasizeTail(d.coach.title, 2);
-    $('coachText').textContent = d.coach.text;
-    const cta = $('coachCta');
-    cta.textContent = d.coach.ctaText;
-    cta.href = d.coach.ctaUrl;
+  const t = d.training;
+  if (t && t.enabled) {
+    $('trainingEyebrow').textContent = t.eyebrow;
+    $('trainingTitle').innerHTML = emphasizeTail(t.title, 2);
+    $('trainingText').textContent = t.text;
+    $('coachName').textContent = t.coachName;
+    $('coachRole').textContent = t.coachRole;
+
+    const foto = $('coachPhoto');
+    if (t.photo) {
+      foto.src = t.photo;
+      foto.alt = `${t.coachName}, ${t.coachRole}`;
+    } else {
+      foto.closest('.coach__photo').remove();
+    }
+
+    $('pillars').innerHTML = (t.pillars || [])
+      .map(
+        (pil) => `
+        <li>
+          <span class="pillars__icon" aria-hidden="true">${icons[pil.icon] || icons.check}</span>
+          <h3>${esc(pil.title)}</h3>
+          <p>${esc(pil.text)}</p>
+        </li>`
+      )
+      .join('');
+
+    $('packagesTitle').textContent = t.packagesTitle || '';
+
+    $('packages').innerHTML = (t.packages || [])
+      .map((paq) => {
+        const precio = t.showPrices && paq.price
+          ? `<p class="pack__price"><strong>${esc(paq.price)}</strong><span>${esc(paq.priceUnit || '')}</span></p>`
+          : `<p class="pack__price pack__price--quote"><strong>${esc(t.priceSoonLabel || 'Cotiza por WhatsApp')}</strong></p>`;
+
+        const lista = (paq.features || [])
+          .map((f) => `<li>${icons.check}<span>${esc(f)}</span></li>`)
+          .join('');
+
+        return `
+          <article class="pack${paq.highlight ? ' pack--top' : ''}">
+            ${paq.highlight ? '<span class="pack__ribbon">Más completo</span>' : ''}
+            <p class="pack__tag">${esc(paq.tag)}</p>
+            <h4 class="pack__title">${esc(paq.title)}</h4>
+            <p class="pack__sub">${esc(paq.subtitle)}</p>
+            ${precio}
+            <ul class="pack__list">${lista}</ul>
+            <a class="btn btn--add pack__cta" href="${waLink(
+              `Hola ${t.coachName}, me interesa el paquete "${paq.title}". ¿Me das más información?`
+            )}" target="_blank" rel="noopener">Me interesa</a>
+          </article>`;
+      })
+      .join('');
+
+    $('entrenamiento').hidden = false;
   } else {
-    $('asesoria').remove();
-    document.querySelectorAll('a[href="#asesoria"]').forEach((a) => a.remove());
+    $('entrenamiento').remove();
+    document.querySelectorAll('a[href="#entrenamiento"]').forEach((a) => a.remove());
   }
 
   /* ====================================================================

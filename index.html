@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FaithLure Supplements — Suplementos deportivos en Colima</title>
-<meta name="description" content="Creatinas, preentrenos y proteínas originales en Colima, México. Cotiza y compra por WhatsApp con asesoría incluida.">
+<title>FaithLure Supplements — Suplementos y entrenamiento en Colima</title>
+<meta name="description" content="Creatinas, preentrenos y proteínas originales en Colima, México, y entrenamiento personal con Damian Torres. Pide por WhatsApp.">
 <meta name="theme-color" content="#171512">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="FaithLure Supplements">
-<meta property="og:description" content="Creatinas, preentrenos y proteínas originales en Colima, México. Cotiza y compra por WhatsApp.">
+<meta property="og:description" content="Suplementos originales y entrenamiento personal en Colima, México. Pide por WhatsApp.">
 <meta property="og:image" content="img/faithlure-mark.svg">
 
 <link rel="icon" href="img/faithlure-mark.svg">
@@ -56,7 +56,7 @@
     <nav class="nav__links" id="navLinks" aria-label="Navegación principal">
       <a href="#catalogo">Catálogo</a>
       <a href="#como-comprar">Cómo comprar</a>
-      <a href="#asesoria">Asesoría</a>
+      <a href="#entrenamiento">Entrenamiento</a>
       <a href="#contacto">Contacto</a>
     </nav>
 
@@ -121,20 +121,27 @@
   </section>
 
   <!-- ============================================================
-       ASESORÍA / COACH
+       ENTRENAMIENTO
        ============================================================ -->
-  <section class="section" id="asesoria">
+  <section class="section section--ink" id="entrenamiento" hidden>
     <div class="container">
+
       <div class="coach reveal">
-        <div class="coach__text">
-          <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span><span id="coachEyebrow"></span></p>
-          <h2 class="section__title" id="coachTitle"></h2>
-          <p class="lead" id="coachText"></p>
-        </div>
-        <div class="coach__action">
-          <a href="#" class="btn btn--ink btn--lg" id="coachCta" target="_blank" rel="noopener"></a>
+        <figure class="coach__photo">
+          <img id="coachPhoto" alt="" loading="lazy">
+        </figure>
+        <div class="coach__intro">
+          <p class="eyebrow"><span class="eyebrow__rule" aria-hidden="true"></span><span id="trainingEyebrow"></span></p>
+          <h2 class="section__title" id="trainingTitle"></h2>
+          <p class="coach__who"><strong id="coachName"></strong><span id="coachRole"></span></p>
+          <p class="lead" id="trainingText"></p>
         </div>
       </div>
+
+      <ul class="pillars reveal" id="pillars"></ul>
+
+      <h3 class="packages__title" id="packagesTitle"></h3>
+      <div class="packages" id="packages"></div>
     </div>
   </section>
 
