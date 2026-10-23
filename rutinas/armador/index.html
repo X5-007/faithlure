@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Armador de rutinas</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#171512">
+
+<link rel="icon" href="../../img/perfil.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="armador.css">
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar__brand">
+    <img src="../../img/perfil.png" alt="">
+    <div>
+      <strong>Armador de rutinas</strong>
+      <span id="barRol">Uso interno</span>
+    </div>
+  </div>
+  <div class="bar__actions">
+    <button class="btn btn--ghost" id="btnImportarLink" type="button">Abrir desde link</button>
+    <button class="btn btn--ghost" id="btnImportar" type="button">Abrir respaldo</button>
+    <button class="btn btn--ghost" id="btnVista" type="button">Vista previa</button>
+    <button class="btn btn--primary" id="btnExportar" type="button">Exportar rutina</button>
+  </div>
+  <input type="file" id="fileImport" accept=".json,application/json" hidden>
+</header>
+
+<main class="layout">
+
+  <!-- ============ BIBLIOTECA ============ -->
+  <aside class="biblio">
+    <div class="biblio__head">
+      <h2>Biblioteca</h2>
+      <p id="biblioDestino">Agrega al día activo</p>
+      <input type="search" id="buscar" class="input" placeholder="Buscar ejercicio…" autocomplete="off">
+      <div class="filtros" id="filtros"></div>
+    </div>
+    <div class="biblio__list" id="biblioList"></div>
+  </aside>
+
+  <!-- ============ RUTINA ============ -->
+  <section class="editor">
+
+    <div class="card">
+      <h2 class="card__title">Datos del alumno</h2>
+      <div class="grid2">
+        <label class="field">
+          <span>Nombre del alumno</span>
+          <input class="input" id="fAlumno" placeholder="Juan Pérez" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Código de la rutina</span>
+          <div class="field__row">
+            <input class="input" id="fSlug" placeholder="r-7k2f-m3x8" autocomplete="off">
+            <button class="btn btn--mini" id="btnSlug" type="button" title="Generar otro código">↻</button>
+          </div>
+        </label>
+        <label class="field">
+          <span>Objetivo</span>
+          <input class="input" id="fObjetivo" placeholder="Bajar grasa y ganar músculo" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Paquete</span>
+          <input class="input" id="fPaquete" placeholder="Entrenamiento Personal" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Vigencia</span>
+          <input class="input" id="fVigencia" placeholder="Octubre – Diciembre 2026" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>Fecha de actualización</span>
+          <input class="input" id="fFecha" type="date">
+        </label>
+      </div>
+      <label class="field">
+        <span>Nota general para el alumno</span>
+        <textarea class="input" id="fNota" rows="2" placeholder="Calienta 8 minutos antes de cada sesión. Avísame si algo te molesta."></textarea>
+      </label>
+    </div>
+
+    <div class="dias" id="dias"></div>
+
+    <button class="btn btn--dashed" id="btnDia" type="button">+ Agregar día</button>
+
+    <div class="card card--muted">
+      <h2 class="card__title">Link del alumno</h2>
+      <div class="candado">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+          <rect x="4.5" y="10.5" width="15" height="10" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>
+        </svg>
+        <p>La rutina se guarda <b>cifrada</b>. La clave viaja en la parte del link
+           que va después del <code>#</code> y nunca llega al servidor: sin el link
+           completo, nadie puede leerla.</p>
+      </div>
+      <div class="publicar__link">
+        <code id="linkFinal">—</code>
+        <button class="btn btn--mini" id="btnCopiarLink" type="button">Copiar</button>
+      </div>
+      <p class="hint aviso-clave">Copia el link <b>completo</b>, incluida la parte del <code>#</code>.
+         Sin ella la rutina no abre.</p>
+      <button class="btn btn--wa" id="btnWa" type="button">Copiar mensaje para WhatsApp</button>
+
+      <label class="field" style="margin-top:16px">
+        <span>Dirección de tu sitio</span>
+        <input class="input" id="fSitio" placeholder="https://x5-007.github.io/faithlure">
+      </label>
+    </div>
+
+    <p class="autosave">El borrador se guarda solo en este navegador.</p>
+    <button class="btn btn--danger-ghost" id="btnLimpiar" type="button">Vaciar y empezar de cero</button>
+  </section>
+</main>
+
+<!-- ============ MODAL DE EXPORTACIÓN ============ -->
+<div class="modal" id="modal" hidden>
+  <div class="modal__box">
+    <button class="modal__x" id="modalX" type="button" aria-label="Cerrar">✕</button>
+    <h2>Rutina cifrada y lista</h2>
+
+    <div class="modal__files">
+      <button class="btn btn--primary" id="btnFileHtml" type="button">Descargar index.html</button>
+      <button class="btn btn--ghost" id="btnFileJson" type="button">Descargar respaldo</button>
+    </div>
+
+    <p class="modal__sub"><b>index.html</b> es el único archivo que va a GitHub.
+       Dentro lleva la rutina cifrada.</p>
+
+    <ol class="pasos">
+      <li>En <b>github.com</b> abre tu repositorio y entra a la carpeta <code>rutinas</code>.</li>
+      <li><b>Add file → Upload files</b>.</li>
+      <li>Arrastra <code>index.html</code> y escribe la ruta <code id="mRuta"></code> antes del nombre.</li>
+      <li><b>Commit changes</b>. En menos de un minuto el link funciona.</li>
+    </ol>
+
+    <div class="peligro">
+      <strong>El respaldo NO se sube a GitHub.</strong>
+      <p>El archivo <code id="mRespaldo"></code> tiene la clave sin cifrar. Guárdalo
+         en tu computadora: es lo que te deja volver a editar esta rutina.
+         Si lo subes al repositorio, el cifrado deja de servir de nada.</p>
+    </div>
+
+    <p class="hint">¿Perdiste el respaldo? Usa <b>«Abrir desde link»</b> y pega la URL
+       completa del alumno: de ahí se recupera la rutina para editarla.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="../../config.js"></script>
+<script src="../ejercicios.js"></script>
+<script src="armador.js"></script>
+</body>
+</html>

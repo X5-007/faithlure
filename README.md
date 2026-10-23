@@ -47,6 +47,7 @@ Total: $1,330
 | `assets/faithlure.css` | Los estilos de las tres páginas. Uno solo, para que la marca sea idéntica. |
 | `assets/faithlure.js` | El motor: arma las páginas desde `config.js`. |
 | `img/` | Logo, tu foto y las fotos de los productos. |
+| `rutinas/` | **Rutinas personalizadas de tus alumnos**, cifradas. Tiene su propio `README.md`. |
 
 ## Lo primero que tienes que hacer: pegar tus videos
 
