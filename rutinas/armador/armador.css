@@ -38,6 +38,10 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
+
+/* Un display propio (por ejemplo .btn con inline-flex) le gana al display:none
+   que el navegador aplica a [hidden]. Con esto, ocultar siempre oculta. */
+[hidden] { display: none !important; }
 body {
   margin: 0;
   background: var(--paper);
@@ -425,3 +429,16 @@ textarea.input { resize: vertical; line-height: 1.5; }
   white-space: nowrap;
 }
 .img-card .btn--mini { padding: 5px 10px; font-size: .72rem; flex: none; }
+
+/* ---- Error al generar imágenes ----------------------------------------- */
+.img-error {
+  grid-column: 1 / -1;
+  padding: 18px 20px;
+  border-radius: var(--r-md);
+  background: rgba(178, 58, 46, .07);
+  border: 1px solid rgba(178, 58, 46, .3);
+  border-left: 3px solid var(--peligro);
+}
+.img-error strong { display: block; font-size: .92rem; color: var(--peligro); margin-bottom: 7px; }
+.img-error p { font-size: .84rem; margin-bottom: 8px; }
+.img-error p:last-child { margin-bottom: 0; }
