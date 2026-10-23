@@ -54,11 +54,17 @@ Se agrupan solos por grupo muscular.
 
 **4. Sube solo `index.html` a GitHub**
 
-1. En tu repositorio, entra a la carpeta `rutinas`.
-2. **Add file → Upload files**.
-3. Arrastra `index.html` y escribe la ruta antes del nombre:
-   `r-7k2f-m3x8/index.html`.
+1. En tu computadora, crea una carpeta con el código que te dio el armador
+   (`r-7k2f-m3x8`) y mete dentro el `index.html`.
+2. En tu repositorio, entra a la carpeta `rutinas`.
+3. **Add file → Upload files** y arrastra **la carpeta completa**.
+   GitHub respeta la estructura; si arrastras el archivo suelto, se te va a
+   la raíz y el link no funciona.
 4. **Commit changes**.
+
+> ¿Prefieres no crear carpetas? **Add file → Create new file**, escribe como
+> nombre `r-7k2f-m3x8/index.html` (al teclear la `/` se crea la carpeta sola),
+> abre el `index.html` descargado con el Bloc de notas, copia todo y pégalo.
 
 **5. Pulsa «Copiar mensaje para WhatsApp»** y pégalo en el chat.
 

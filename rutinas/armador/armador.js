@@ -413,7 +413,7 @@ ${extraHead || ''}
 
   async function exportar() {
     if (!(await validar())) return;
-    $('#mRuta').textContent = `rutinas/${R.slug}/`;
+    $('#mRuta').textContent = R.slug;
     $('#mRespaldo').textContent = `respaldo-${R.slug}.json`;
     $('#modal').hidden = false;
   }
