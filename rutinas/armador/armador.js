@@ -724,9 +724,23 @@ ${extraHead || ''}
             <button class="btn btn--mini" data-bajar="${i}" type="button">Descargar</button>
           </figcaption>
         </figure>`).join('');
+      $('#btnBajarTodas').hidden = false;
       $('#modalImg').hidden = false;
     } catch (e) {
-      toast('No se pudieron generar las imágenes');
+      // El aviso flotante dura 3 segundos y se pierde: el error se queda a la
+      // vista, con el motivo, para poder arreglarlo.
+      console.error('[Imágenes] fallo al generar:', e);
+      const motivo = (e && e.message) ? e.message : String(e);
+      $('#imgCuenta').textContent = '';
+      $('#btnBajarTodas').hidden = true;
+      $('#imgGrid').innerHTML = `
+        <div class="img-error">
+          <strong>No se pudieron generar las imágenes</strong>
+          <p>${esc(motivo)}</p>
+          <p class="hint">Si no se entiende, abre la consola del navegador con
+             <b>F12</b> (pestaña «Console») y mándame lo que aparezca en rojo.</p>
+        </div>`;
+      $('#modalImg').hidden = false;
     } finally {
       btn.disabled = false;
       btn.textContent = original;

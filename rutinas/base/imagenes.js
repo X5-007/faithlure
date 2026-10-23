@@ -106,13 +106,17 @@ const RutinaImagenes = (function () {
 
   async function fuentesListas() {
     if (!document.fonts) return;
+    // Con tope de tiempo: si las fuentes no cargan (sin red, o bloqueadas por
+    // el navegador), seguimos con la tipografía de respaldo en vez de quedarnos
+    // esperando para siempre.
+    const tope = (promesa, ms) => Promise.race([promesa, new Promise((r) => setTimeout(r, ms))]);
     try {
-      await Promise.all([
+      await tope(Promise.all([
         document.fonts.load('600 1em Fraunces'), document.fonts.load('700 1em Fraunces'),
         document.fonts.load('400 1em Inter'), document.fonts.load('500 1em Inter'),
         document.fonts.load('600 1em Inter'), document.fonts.load('700 1em Inter'),
-      ]);
-      await document.fonts.ready;
+      ]), 5000);
+      await tope(document.fonts.ready, 2000);
     } catch (e) {}
   }
 
@@ -553,15 +557,34 @@ const RutinaImagenes = (function () {
     const salida = [];
     for (let i = 0; i < lienzos.length; i++) {
       const { etiqueta, cv } = lienzos[i];
-      const blob = await new Promise((res) => cv.toBlob(res, 'image/jpeg', 0.93));
+      let blob = null, url = '';
+      try {
+        blob = await new Promise((res) => cv.toBlob(res, 'image/jpeg', 0.93));
+      } catch (e) { blob = null; }
+
+      if (blob) {
+        url = URL.createObjectURL(blob);
+      } else {
+        // Algunos navegadores con protección antihuella devuelven null en
+        // toBlob; ahí probamos con toDataURL antes de darnos por vencidos.
+        try { url = cv.toDataURL('image/jpeg', 0.93); } catch (e) { url = ''; }
+        if (!url || url.length < 1000) {
+          throw new Error('El navegador no deja exportar el contenido del lienzo. '
+            + 'Suele ser la protección antihuella: desactiva los escudos para este '
+            + 'sitio (el icono del león, arriba a la derecha en Brave) y reintenta.');
+        }
+      }
       salida.push({
         etiqueta,
         archivo: `${String(i + 1).padStart(2, '0')}-${etiqueta.toLowerCase()
           .normalize('NFD').replace(/[̀-ͯ]/g, '')
           .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')}.jpg`,
         blob,
-        url: URL.createObjectURL(blob),
+        url,
       });
+    }
+    if (!salida.length) {
+      throw new Error('No se generó ninguna imagen. Revisa que la rutina tenga al menos un día con ejercicios.');
     }
     return salida;
   }
