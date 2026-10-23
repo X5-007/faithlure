@@ -27,6 +27,7 @@
     <button class="btn btn--ghost" id="btnImportarLink" type="button">Abrir desde link</button>
     <button class="btn btn--ghost" id="btnImportar" type="button">Abrir respaldo</button>
     <button class="btn btn--ghost" id="btnVista" type="button">Vista previa</button>
+    <button class="btn btn--ghost" id="btnImagenes" type="button">Imágenes</button>
     <button class="btn btn--primary" id="btnExportar" type="button">Exportar rutina</button>
   </div>
   <input type="file" id="fileImport" accept=".json,application/json" hidden>
@@ -229,10 +230,31 @@
   </div>
 </div>
 
+<!-- ============ MODAL: IMÁGENES ============ -->
+<div class="modal" id="modalImg" hidden>
+  <div class="modal__box modal__box--ancho">
+    <button class="modal__x" id="modalImgX" type="button" aria-label="Cerrar">✕</button>
+    <h2>Imágenes para compartir</h2>
+    <p class="modal__sub">Formato historia (1080 × 1920), listo para estados de
+       WhatsApp e Instagram. Los días largos se parten solos.</p>
+
+    <div class="img-acciones">
+      <button class="btn btn--primary" id="btnBajarTodas" type="button">Descargar todas</button>
+      <span class="hint" id="imgCuenta"></span>
+    </div>
+
+    <div class="img-grid" id="imgGrid"></div>
+
+    <p class="hint">Las imágenes son una foto fija: si editas la rutina después,
+       vuelve a generarlas. El link del alumno sí se actualiza solo.</p>
+  </div>
+</div>
+
 <div class="toast" id="toast" hidden></div>
 
 <script src="../../config.js"></script>
 <script src="../ejercicios.js"></script>
+<script src="../base/imagenes.js"></script>
 <script src="armador.js"></script>
 </body>
 </html>
