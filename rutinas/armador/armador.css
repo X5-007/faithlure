@@ -327,3 +327,48 @@ textarea.input { resize: vertical; line-height: 1.5; }
 .peligro p { font-size: .82rem; }
 
 .modal__sub { font-size: .85rem; margin-bottom: 16px; }
+
+/* ---- Cabecera de la biblioteca ----------------------------------------- */
+.biblio__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+.biblio__guardar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: var(--r-md);
+  background: var(--bronze-soft);
+  border: 1px solid rgba(201, 161, 90, .38);
+}
+.biblio__guardar[hidden] { display: none; }
+.biblio__guardar p { font-size: .76rem; flex: 1; min-width: 130px; color: var(--text-soft); }
+.biblio__guardar b { color: var(--clay); }
+
+/* ---- Fila de la biblioteca con botón de quitar -------------------------- */
+.bib-fila { display: flex; align-items: center; gap: 2px; }
+.bib-fila .bib-item { flex: 1; min-width: 0; }
+.bib-item__quitar { flex: none; width: 26px; height: 26px; font-size: .7rem; opacity: 0; }
+.bib-fila:hover .bib-item__quitar,
+.bib-item__quitar:focus-visible { opacity: 1; }
+@media (hover: none) { .bib-item__quitar { opacity: 1; } }
+
+.bib-item__tuyo {
+  display: inline-block;
+  margin-left: 7px;
+  padding: 1px 7px;
+  border-radius: var(--r-pill);
+  background: var(--bronze-soft);
+  border: 1px solid rgba(201, 161, 90, .4);
+  color: var(--clay);
+  font-size: .6rem;
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+/* El bloque del candado también sirve de aviso en el alta de ejercicios */
+.modal .candado { margin-top: 14px; }

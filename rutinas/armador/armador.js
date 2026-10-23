@@ -21,6 +21,7 @@
 
   const $ = (s) => document.querySelector(s);
   const LS = 'fl_rutina_borrador';
+  const LS_BIB = 'fl_biblioteca_extra';
   const SITIO_DEF = 'https://x5-007.github.io/faithlure';
 
   const COACH = (() => {
@@ -92,6 +93,28 @@
 
   let R = vacio();
   let diaActivo = 0;
+
+  /* Ejercicios que agregaste desde aquí y todavía no están en ejercicios.js.
+     Viven en este navegador hasta que los guardes en el sitio. */
+  let extras = [];
+
+  const guardarExtras = () => { try { localStorage.setItem(LS_BIB, JSON.stringify(extras)); } catch (e) {} };
+
+  function cargarExtras() {
+    try { extras = JSON.parse(localStorage.getItem(LS_BIB) || '[]'); } catch (e) { extras = []; }
+    // Si ya llegaron al archivo, se quitan de aquí: así nunca se duplican.
+    const enArchivo = new Set(EJERCICIOS.map((e) => e.id));
+    const antes = extras.length;
+    extras = extras.filter((e) => !enArchivo.has(e.id));
+    if (extras.length !== antes) guardarExtras();
+  }
+
+  const biblioteca = () => EJERCICIOS.concat(extras);
+  function gruposTodos() {
+    const g = GRUPOS.slice();
+    extras.forEach((e) => { if (e.grupo && !g.includes(e.grupo)) g.push(e.grupo); });
+    return g;
+  }
   let filtroGrupo = '';
   let busqueda = '';
 
@@ -115,7 +138,7 @@
                'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'][Number(p[1]) - 1];
     return m ? `${Number(p[2])} de ${m} de ${p[0]}` : iso;
   }
-  const porId = (id) => EJERCICIOS.find((e) => e.id === id);
+  const porId = (id) => biblioteca().find((e) => e.id === id);
   const nombrePila = () => (R.alumno || '').trim().split(/\s+/)[0] || '';
 
   const base = () => (R.sitio || SITIO_DEF).replace(/\/+$/, '');
@@ -147,12 +170,12 @@
   function renderFiltros() {
     $('#filtros').innerHTML =
       `<button class="filtro${filtroGrupo === '' ? ' is-on' : ''}" data-g="">Todos</button>` +
-      GRUPOS.map((g) => `<button class="filtro${filtroGrupo === g ? ' is-on' : ''}" data-g="${esc(g)}">${esc(g)}</button>`).join('');
+      gruposTodos().map((g) => `<button class="filtro${filtroGrupo === g ? ' is-on' : ''}" data-g="${esc(g)}">${esc(g)}</button>`).join('');
   }
 
   function renderBiblio() {
     const q = busqueda.toLowerCase();
-    const lista = EJERCICIOS.filter((e) =>
+    const lista = biblioteca().filter((e) =>
       (!filtroGrupo || e.grupo === filtroGrupo) &&
       (!q || e.nombre.toLowerCase().includes(q) || e.grupo.toLowerCase().includes(q)));
 
@@ -160,19 +183,35 @@
       ? `Se agrega a: ${R.dias[diaActivo] ? (R.dias[diaActivo].nombre || 'Día ' + (diaActivo + 1)) : '—'}`
       : 'Primero agrega un día';
 
+    const propios = new Set(extras.map((e) => e.id));
+
     $('#biblioList').innerHTML = lista.length
       ? lista.map((e) => `
-          <button class="bib-item" data-add="${esc(e.id)}" type="button">
-            ${e.poster
-              ? `<img class="bib-item__mini" src="../clips/${esc(e.poster)}" alt="" loading="lazy">`
-              : `<span class="bib-item__mini"></span>`}
-            <span class="bib-item__txt">
-              <b>${esc(e.nombre)}</b>
-              <span>${esc(e.grupo)}${e.clip ? '' : ' · <i class="bib-item__sin">sin clip</i>'}</span>
-            </span>
-            <span class="bib-item__add">+</span>
-          </button>`).join('')
-      : '<p class="vacio">Ningún ejercicio coincide.<br>Agrégalo en <code>ejercicios.js</code>.</p>';
+          <div class="bib-fila">
+            <button class="bib-item" data-add="${esc(e.id)}" type="button">
+              ${e.poster
+                ? `<img class="bib-item__mini" src="../clips/${esc(e.poster)}" alt="" loading="lazy"
+                        onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'bib-item__mini'}))">`
+                : `<span class="bib-item__mini"></span>`}
+              <span class="bib-item__txt">
+                <b>${esc(e.nombre)}${propios.has(e.id) ? '<i class="bib-item__tuyo">tuyo</i>' : ''}</b>
+                <span>${esc(e.grupo)}${e.clip ? '' : ' · <i class="bib-item__sin">sin clip</i>'}</span>
+              </span>
+              <span class="bib-item__add">+</span>
+            </button>
+            ${propios.has(e.id)
+              ? `<button class="icon-btn icon-btn--del bib-item__quitar" data-quitar="${esc(e.id)}" title="Quitar de la biblioteca" type="button">✕</button>`
+              : ''}
+          </div>`).join('')
+      : '<p class="vacio">Ningún ejercicio coincide.<br>Puedes crearlo con <b>+ Nuevo</b>.</p>';
+
+    const n = extras.length;
+    $('#biblioGuardar').hidden = n === 0;
+    if (n) {
+      $('#extrasCuenta').innerHTML = n === 1
+        ? '<b>1 ejercicio tuyo</b> solo está en este navegador.'
+        : `<b>${n} ejercicios tuyos</b> solo están en este navegador.`;
+    }
   }
 
   /* =====================================================================
@@ -492,6 +531,17 @@ ${extraHead || ''}
     renderBiblio();
   });
   $('#biblioList').addEventListener('click', (e) => {
+    const quitar = e.target.closest('[data-quitar]');
+    if (quitar) {
+      const id = quitar.dataset.quitar;
+      const ej = extras.find((x) => x.id === id);
+      if (!confirm(`¿Quitar "${ej ? ej.nombre : id}" de la biblioteca?\n\nLas rutinas que ya lo usan no se tocan.`)) return;
+      extras = extras.filter((x) => x.id !== id);
+      guardarExtras();
+      renderFiltros();
+      renderBiblio();
+      return;
+    }
     const b = e.target.closest('[data-add]');
     if (!b) return;
     if (!R.dias.length) { toast('Primero agrega un día'); return; }
@@ -578,7 +628,12 @@ ${extraHead || ''}
 
   $('#modalX').addEventListener('click', () => { $('#modal').hidden = true; });
   $('#modal').addEventListener('click', (e) => { if (e.target === $('#modal')) $('#modal').hidden = true; });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') $('#modal').hidden = true; });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    $('#modal').hidden = true;
+    $('#modalEj').hidden = true;
+    $('#modalBib').hidden = true;
+  });
 
   async function copiar(texto, ok) {
     try { await navigator.clipboard.writeText(texto); toast(ok); }
@@ -636,6 +691,122 @@ ${extraHead || ''}
   });
 
   /* =====================================================================
+     NUEVOS EJERCICIOS
+     ===================================================================== */
+  function slugId(txt) {
+    return String(txt).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase().replace(/[^a-z0-9\s-]/g, '').trim()
+      .replace(/\s+/g, '-').replace(/-+/g, '-');
+  }
+
+  function abrirNuevoEj() {
+    const sel = $('#nvGrupo');
+    sel.innerHTML = gruposTodos().map((g) => `<option value="${esc(g)}">${esc(g)}</option>`).join('')
+      + '<option value="__otro">Otro grupo nuevo…</option>';
+    if (filtroGrupo) sel.value = filtroGrupo;
+    $('#nvGrupoOtroCampo').hidden = true;
+    $('#nvNombre').value = '';
+    $('#nvGrupoOtro').value = '';
+    $('#nvClip').value = '';
+    $('#modalEj').hidden = false;
+    $('#nvNombre').focus();
+  }
+
+  $('#btnNuevoEj').addEventListener('click', abrirNuevoEj);
+  $('#modalEjX').addEventListener('click', () => { $('#modalEj').hidden = true; });
+  $('#modalEj').addEventListener('click', (e) => { if (e.target === $('#modalEj')) $('#modalEj').hidden = true; });
+  $('#nvGrupo').addEventListener('change', (e) => {
+    const otro = e.target.value === '__otro';
+    $('#nvGrupoOtroCampo').hidden = !otro;
+    if (otro) $('#nvGrupoOtro').focus();
+  });
+
+  // Sugerir el nombre del archivo a partir del nombre del ejercicio
+  $('#nvNombre').addEventListener('input', (e) => {
+    const campo = $('#nvClip');
+    if (!campo.dataset.tocado) campo.placeholder = (slugId(e.target.value) || 'nombre-del-clip') + '.mp4';
+  });
+  $('#nvClip').addEventListener('input', (e) => { e.target.dataset.tocado = '1'; });
+
+  $('#nvGuardar').addEventListener('click', () => {
+    const nombre = $('#nvNombre').value.trim();
+    if (!nombre) { toast('Ponle nombre al ejercicio'); $('#nvNombre').focus(); return; }
+
+    let grupo = $('#nvGrupo').value;
+    if (grupo === '__otro') {
+      grupo = $('#nvGrupoOtro').value.trim();
+      if (!grupo) { toast('Escribe el nombre del grupo'); $('#nvGrupoOtro').focus(); return; }
+    }
+
+    let id = slugId(nombre);
+    if (!id) { toast('Ese nombre no sirve para generar un identificador'); return; }
+    if (biblioteca().some((e) => e.id === id)) {
+      if (!confirm(`Ya existe un ejercicio con el identificador "${id}".\n¿Guardarlo igual con un sufijo?`)) return;
+      let i = 2;
+      while (biblioteca().some((e) => e.id === `${id}-${i}`)) i++;
+      id = `${id}-${i}`;
+    }
+
+    let clip = $('#nvClip').value.trim();
+    if (clip && !/\.(mp4|webm|mov)$/i.test(clip)) clip += '.mp4';
+    const poster = clip ? clip.replace(/\.[^.]+$/, '.jpg') : '';
+
+    extras.push({ id, nombre, grupo, clip, poster });
+    guardarExtras();
+    $('#modalEj').hidden = true;
+    filtroGrupo = '';
+    busqueda = '';
+    $('#buscar').value = '';
+    renderFiltros();
+    renderBiblio();
+    toast(`"${nombre}" agregado a ${grupo}`);
+  });
+
+  /* Arma un ejercicios.js completo: lo del archivo más lo que agregaste. */
+  function archivoBiblioteca() {
+    const todos = biblioteca();
+    const grupos = gruposTodos();
+    const linea = (e) => `  { id: ${JSON.stringify(e.id)}, nombre: ${JSON.stringify(e.nombre)}, `
+      + `grupo: ${JSON.stringify(e.grupo)}, clip: ${JSON.stringify(e.clip || '')}`
+      + (e.poster ? `, poster: ${JSON.stringify(e.poster)}` : '') + ' },';
+
+    return `/* =========================================================================
+   BIBLIOTECA DE EJERCICIOS
+   =========================================================================
+   Esta es la lista de la que eliges al armar una rutina.
+   Puedes agregar ejercicios desde el armador (botón "+ Nuevo") y luego
+   guardarlos aquí, o escribirlos a mano copiando una línea y cambiándola.
+
+   id      -> identificador único, en minúsculas y con guiones. No lo repitas.
+   nombre  -> como se ve en la rutina del alumno.
+   grupo   -> tiene que ser uno de los de GRUPOS (abajo).
+   clip    -> nombre del archivo MP4 dentro de la carpeta clips/.
+              Déjalo en "" si todavía no tienes el video: el ejercicio se
+              muestra igual, solo que sin animación.
+   poster  -> imagen que se ve antes de que cargue el video (opcional).
+
+   Especificaciones de los clips: lee clips/LEEME.txt
+
+   Generado desde el armador el ${new Date().toLocaleDateString('es-MX')}.
+   ========================================================================= */
+
+const GRUPOS = [
+${grupos.map((g) => `  ${JSON.stringify(g)},`).join('\n')}
+];
+
+const EJERCICIOS = [
+${todos.map(linea).join('\n')}
+];
+`;
+  }
+
+  $('#btnBajarBiblio').addEventListener('click', () => { $('#modalBib').hidden = false; });
+  $('#modalBibX').addEventListener('click', () => { $('#modalBib').hidden = true; });
+  $('#modalBib').addEventListener('click', (e) => { if (e.target === $('#modalBib')) $('#modalBib').hidden = true; });
+  $('#btnFileBib').addEventListener('click', () =>
+    descargar('ejercicios.js', archivoBiblioteca(), 'text/javascript'));
+
+  /* =====================================================================
      ARRANQUE
      ===================================================================== */
   function pintarTodo() {
@@ -655,6 +826,7 @@ ${extraHead || ''}
 
   (async function inicio() {
     $('#barRol').textContent = `${COACH.nombre} · uso interno`;
+    cargarExtras();
     cargar();
     if (!hayCripto()) {
       toast('Ábrelo desde tu sitio con https: aquí no se puede cifrar');
