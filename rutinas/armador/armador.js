@@ -33,6 +33,7 @@
       rol: c.rol || 'Coach de entrenamiento',
       whatsapp: w.numero || '',
       lada: w.lada || '52',
+      mostrar: w.mostrar || '',
     };
   })();
 
@@ -633,6 +634,7 @@ ${extraHead || ''}
     $('#modal').hidden = true;
     $('#modalEj').hidden = true;
     $('#modalBib').hidden = true;
+    $('#modalImg').hidden = true;
   });
 
   async function copiar(texto, ok) {
@@ -688,6 +690,69 @@ ${extraHead || ''}
     if (hayCripto()) { R.slug = slugAuto(); R.clave = await nuevaClave(); }
     pintarTodo();
     guardar();
+  });
+
+  /* =====================================================================
+     IMÁGENES PARA COMPARTIR
+     ===================================================================== */
+  let imgsGeneradas = [];
+
+  function limpiarImgs() {
+    imgsGeneradas.forEach((i) => URL.revokeObjectURL(i.url));
+    imgsGeneradas = [];
+  }
+
+  async function generarImagenes() {
+    if (!(await validar())) return;
+    if (typeof RutinaImagenes === 'undefined') { toast('No se pudo cargar el generador'); return; }
+
+    const btn = $('#btnImagenes');
+    const original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Generando…';
+
+    try {
+      limpiarImgs();
+      imgsGeneradas = await RutinaImagenes.generar(datosRutina(), { rutaClips: '../clips/' });
+
+      $('#imgCuenta').textContent = `${imgsGeneradas.length} ${imgsGeneradas.length === 1 ? 'imagen' : 'imágenes'}`;
+      $('#imgGrid').innerHTML = imgsGeneradas.map((im, i) => `
+        <figure class="img-card">
+          <img src="${im.url}" alt="${esc(im.etiqueta)}" loading="lazy">
+          <figcaption>
+            <span>${esc(im.etiqueta)}</span>
+            <button class="btn btn--mini" data-bajar="${i}" type="button">Descargar</button>
+          </figcaption>
+        </figure>`).join('');
+      $('#modalImg').hidden = false;
+    } catch (e) {
+      toast('No se pudieron generar las imágenes');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
+  }
+
+  function bajarImg(im) {
+    const a = document.createElement('a');
+    a.href = im.url;
+    a.download = im.archivo;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  $('#btnImagenes').addEventListener('click', generarImagenes);
+  $('#modalImgX').addEventListener('click', () => { $('#modalImg').hidden = true; });
+  $('#modalImg').addEventListener('click', (e) => { if (e.target === $('#modalImg')) $('#modalImg').hidden = true; });
+  $('#imgGrid').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-bajar]');
+    if (b) bajarImg(imgsGeneradas[+b.dataset.bajar]);
+  });
+  $('#btnBajarTodas').addEventListener('click', () => {
+    // Con una pausa entre cada una: el navegador bloquea las descargas en ráfaga.
+    imgsGeneradas.forEach((im, i) => setTimeout(() => bajarImg(im), i * 400));
+    toast('Descargando ' + imgsGeneradas.length + ' imágenes');
   });
 
   /* =====================================================================

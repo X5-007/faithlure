@@ -372,3 +372,56 @@ textarea.input { resize: vertical; line-height: 1.5; }
 
 /* El bloque del candado también sirve de aviso en el alta de ejercicios */
 .modal .candado { margin-top: 14px; }
+
+/* ---- Modal de imágenes -------------------------------------------------- */
+.modal__box--ancho { max-width: 860px; }
+
+.img-acciones {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 18px 0 16px;
+}
+
+.img-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+  max-height: 56vh;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.img-card {
+  margin: 0;
+  background: var(--paper-warm);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+.img-card img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1080 / 1920;
+  object-fit: cover;
+  object-position: top;
+  background: var(--paper);
+}
+.img-card figcaption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 10px;
+  border-top: 1px solid var(--line);
+  background: var(--paper-card);
+}
+.img-card figcaption span {
+  font-size: .78rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.img-card .btn--mini { padding: 5px 10px; font-size: .72rem; flex: none; }

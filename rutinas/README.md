@@ -68,6 +68,30 @@ Se agrupan solos por grupo muscular.
 
 **5. Pulsa «Copiar mensaje para WhatsApp»** y pégalo en el chat.
 
+---
+
+## Imágenes para compartir
+
+El botón **«Imágenes»** arma la rutina como historias de **1080 × 1920**, listas
+para estados de WhatsApp e Instagram: una portada con los datos del alumno y tu
+nota general, y una por cada día con sus ejercicios, series, descansos y notas.
+
+Si un día tiene demasiados ejercicios para que quepan legibles, se parte solo
+(«Lunes · 1 de 2») y el bloque muscular que continúa se marca con *(sigue)*.
+
+Se abre una ventana con todas para que las revises antes de mandarlas, y puedes
+descargarlas de una en una o todas juntas.
+
+Tres cosas que conviene tener claras:
+
+- **Son una foto fija.** Si editas la rutina después, hay que volver a generarlas
+  y reenviarlas. El link del alumno, en cambio, se actualiza solo. Por eso las
+  imágenes son un complemento del link, no un reemplazo.
+- **No llevan cifrado.** Una vez enviadas son reenviables y se leen solas, con el
+  nombre del alumno y la rutina completa. Es el precio de que funcionen sin internet.
+- **No llevan video.** Va el cuadro congelado del clip. El video sigue siendo el
+  motivo para abrir el link.
+
 > ⚠️ El link tiene que llegar **completo**, con la parte del `#`. Si se corta,
 > el alumno ve un aviso que le dice que te lo pida de nuevo.
 
@@ -158,7 +182,7 @@ y no dicen nada de ningún alumno.
 | `armador/` | Tu panel para crear rutinas. Solo tuyo. |
 | `ejercicios.js` | La biblioteca de ejercicios. |
 | `clips/` | Los videos y sus miniaturas. |
-| `base/` | Diseño y motor de la rutina del alumno. No se toca para cambiar una rutina. |
+| `base/` | Diseño y motor de la rutina del alumno, y el generador de imágenes. No se toca para cambiar una rutina. |
 | `og.jpg` | La imagen de la vista previa de WhatsApp. |
 | `r-zqig-kpug/` | Rutina de ejemplo con datos inventados. Bórrala cuando quieras. |
 
