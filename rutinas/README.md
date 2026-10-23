@@ -54,11 +54,17 @@ Se agrupan solos por grupo muscular.
 
 **4. Sube solo `index.html` a GitHub**
 
-1. En tu repositorio, entra a la carpeta `rutinas`.
-2. **Add file → Upload files**.
-3. Arrastra `index.html` y escribe la ruta antes del nombre:
-   `r-7k2f-m3x8/index.html`.
+1. En tu computadora, crea una carpeta con el código que te dio el armador
+   (`r-7k2f-m3x8`) y mete dentro el `index.html`.
+2. En tu repositorio, entra a la carpeta `rutinas`.
+3. **Add file → Upload files** y arrastra **la carpeta completa**.
+   GitHub respeta la estructura; si arrastras el archivo suelto, se te va a
+   la raíz y el link no funciona.
 4. **Commit changes**.
+
+> ¿Prefieres no crear carpetas? **Add file → Create new file**, escribe como
+> nombre `r-7k2f-m3x8/index.html` (al teclear la `/` se crea la carpeta sola),
+> abre el `index.html` descargado con el Bloc de notas, copia todo y pégalo.
 
 **5. Pulsa «Copiar mensaje para WhatsApp»** y pégalo en el chat.
 
@@ -94,7 +100,30 @@ mismo**. No tienes que mandarle nada nuevo.
 
 ## Agregar ejercicios a la biblioteca
 
-Edita `ejercicios.js`:
+### Desde el armador (lo normal)
+
+Pulsa **«+ Nuevo»** arriba de la biblioteca. Le pones nombre, eliges el grupo
+muscular —o escribes uno nuevo, como «Antebrazo»— y, si ya tienes el video,
+el nombre del archivo. **Queda disponible al instante** y lo puedes usar en
+la rutina que estés armando.
+
+Esos ejercicios aparecen marcados con **TUYO** y viven solo en ese navegador.
+Para tenerlos siempre y desde cualquier computadora, pulsa
+**«Guardarlos en el sitio»**:
+
+1. Descargas el `ejercicios.js` que te arma el armador (el de siempre más los tuyos).
+2. En GitHub abres `rutinas/ejercicios.js`, pulsas el **lápiz**, borras todo y pegas el nuevo.
+3. **Commit changes**.
+
+Al recargar el armador, tus ejercicios ya vienen del archivo y la lista local
+se limpia sola. **No se duplican.**
+
+Para quitar uno de los tuyos, pasa el cursor por encima y pulsa la **✕**. Las
+rutinas que ya lo usan no se tocan: cada rutina guarda su propia copia.
+
+### A mano, editando el archivo
+
+También puedes escribirlos directo en `ejercicios.js`:
 
 ```js
 {
@@ -108,6 +137,10 @@ Edita `ejercicios.js`:
 
 Si todavía no grabaste el video, deja `clip: ""`: el ejercicio sale igual,
 con un recuadro en lugar de la animación.
+
+> **El video nunca se sube desde el armador.** Graba tu clip, nómbralo igual
+> que pusiste en `clip` y súbelo a `rutinas/clips/`. Mientras tanto el
+> ejercicio funciona perfectamente, solo que sin animación.
 
 Specs de los videos en **`clips/LEEME.txt`** — 3 a 6 segundos, MP4, menos de
 1 MB. Los tres que vienen son de ejemplo: reemplázalos por los tuyos con el
